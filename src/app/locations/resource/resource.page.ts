@@ -251,12 +251,15 @@ export class ResourcePage implements OnInit {
         console.log('Disable street');
         console.log(document.getElementById('streetInput') as HTMLInputElement);
         document.getElementById('streetInput').classList.add('ion-hide');
+        document.getElementById('24HourPhoneInput').classList.add('ion-hide');
+
         // this.location.callCenter = true;
     }
 
     enableStreet() {
         // (document.getElementById('streetInput') as HTMLInputElement).disabled = false;
         document.getElementById('streetInput').classList.remove('ion-hide');
+        document.getElementById('24HourPhoneInput').classList.remove('ion-hide');
         // this.location.callCenter = false;
     }
 
