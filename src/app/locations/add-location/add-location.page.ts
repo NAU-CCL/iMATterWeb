@@ -34,7 +34,7 @@ export class AddLocationPage implements OnInit {
     longitude: 0,
     street: '',
     phone: '',
-    phone24Hour: undefined,
+    phone24Hour: false,
     MOpen: '',
     MClose: '',
     TOpen: '',
@@ -160,8 +160,6 @@ export class AddLocationPage implements OnInit {
       }, err => {
         this.showToast('There was a problem adding your location');
       });
-
-      this.silentlyUpdateLocation(this.location);
     }
 
 
@@ -208,12 +206,14 @@ export class AddLocationPage implements OnInit {
     console.log(document.getElementById('streetInput') as HTMLInputElement);
     // (document.getElementById('streetInput') as HTMLInputElement).disabled = true;
     (document.getElementById('streetInput') as HTMLInputElement).classList.add('ion-hide');
+    (document.getElementById('24HourPhoneInput') as HTMLInputElement).classList.add('ion-hide');
     // this.location.callCenter = true;
   }
 
   enableStreet() {
     // (document.getElementById('streetInput') as HTMLInputElement).disabled = false;
     (document.getElementById('streetInput') as HTMLInputElement).classList.remove('ion-hide');
+    (document.getElementById('24HourPhoneInput') as HTMLInputElement).classList.remove('ion-hide');
     // this.location.callCenter = false;
   }
 
