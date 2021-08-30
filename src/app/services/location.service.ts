@@ -3,8 +3,6 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument,
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-
-
 export interface Location {
   id?: string;
   title: string;

@@ -9,7 +9,7 @@ admin.initializeApp(functions.config().firebase);
 //admin.initializeApp();
 require('dotenv').config();
 
-const {SENDER_EMAIL, SENDER_PASS} = process.env;
+const { SENDER_EMAIL, SENDER_PASS } = process.env;
 
 exports.sendEmailNotification = functions.https.onRequest((req, res) => {
     let authData = nodemailer.createTransport({
@@ -152,54 +152,6 @@ exports.updateDays = functions.https.onRequest((req, res) => {
             currentUser.update({
                 joinedChallenges: updateJoinedChallenges
             });
-
-            // currentUser.update({
-            // 	totalDaysRecovery: recoveryDays
-            // });
-            //
-            // currentUser.update({
-            // 	daysRecovery: recoveryDays % 7
-            // });
-            //
-            // currentUser.update({
-            // 	totalDaysRecovery: Math.floor(recoveryDays / 7)
-            // });
-            // Calculate pregnancy days stuff
-            // var dueDate = doc.data().dueDate;
-            // const currentDateString = new Date().toJSON().split('T')[0];
-            // const currentDate = new Date(currentDateString);
-            // const userDueDate = new Date(dueDate);
-            //
-            // const dateDiff = Math.abs(currentDate.getTime() - userDueDate.getTime());
-            // const diffInDays = Math.ceil(dateDiff / (24 * 3600 * 1000));
-            //
-            // var totalDays;
-            //
-            // //if user is still within 280 days of pregnancy
-            // if (userDueDate >= currentDate)
-            // {
-            // 	totalDays = 280 - diffInDays - 1;
-            // }
-            // else if (userDueDate < currentDate) //past due date
-            // {
-            // 	//start adding onto 280
-            // 	totalDays = 280 + diffInDays;
-            // }
-            //
-            // const weeksPregnant = Math.floor(totalDays / 7);
-            // const daysPregnant = totalDays % 7;
-            //
-            // currentUser.update({
-            // 	totalDaysPregnant: totalDays
-            // });
-            //
-            // currentUser.update({
-            // 	daysPregnant: daysPregnant
-            // });
-            //
-            // currentUser.update({
-            // 	weeksPregnant: weeksPregnant
-            // });
         });
 
         //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
@@ -237,6 +189,39 @@ exports.updateDays = functions.https.onRequest((req, res) => {
         console.log('Failed: ' + err);
     });
 
+
+    // check for available surveys
+    const surveys = admin.firestore().collection('surveys-v2');
+    const availableSurveys = [];
+    surveys.get().then(result => {
+        result.forEach(doc => {
+            if (doc.get('type') == 'Days After Joining') {
+                var characteristics = doc.get('characteristcs');
+                if (currentUser.daysAUser >= characteristics['daysAfterJoining']) {
+                    availableSurveys.push(doc.get('id'));
+                }
+            } else if (doc.get('type') == 'Repeating') {
+                var weekdays = new Array(
+                    "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"
+                );
+                var characteristics = doc.get('characteristcs');
+                var date = new Date();
+                var dayOfWeek = weekdays[date.getDay()];
+                var dayOfMonth = date.getDate();
+                if (characteristics['repeatEvery'] == 'weekly' && dayOfWeek == characteristics['display']) {
+                    availableSurveys.push(doc.get('id'));
+                } else if (characteristics['repeatEvery'] == 'monthy' && dayOfMonth == characteristics['display']) {
+                    availableSurveys.push(doc.get('id'));
+                } else if (characteristics['repeatEvery'] == 'daily') {
+                    availableSurveys.push(doc.get('id'));
+                }
+                currentUser.update({
+                    availableSurveys: availableSurveys
+                });
+            }
+        })
+    })
+
 });
 
 exports.sendInfoDeskNotification =
@@ -262,8 +247,8 @@ exports.sendInfoDeskNotification =
                             console.log('sent notification');
                             return payload;
                         }).catch((err) => {
-                        console.log('entered doc, but did not send', err);
-                    });
+                            console.log('entered doc, but did not send', err);
+                        });
                 }
             });
             return 'true';
@@ -309,8 +294,8 @@ exports.sendChatNotifications =
                                     console.log('sent notification');
                                     return payload;
                                 }).catch((err) => {
-                                console.log('entered doc, but did not send', err);
-                            });
+                                    console.log('entered doc, but did not send', err);
+                                });
                         }
                     }
                 });
@@ -325,44 +310,44 @@ exports.sendChatNotifications =
 
 /*
 exports.sendChatNotification =
-	functions.firestore.document('chats/{chatID}').onCreate(async (snap, context) => {
-		const newChat = snap.data();
-		const payload = {
-			notification: {
-				title: 'iMATter Chat Room',
-				body: 'There is a new message in the chat room',
-				sound: "default"
-			},
-		};
+    functions.firestore.document('chats/{chatID}').onCreate(async (snap, context) => {
+        const newChat = snap.data();
+        const payload = {
+            notification: {
+                title: 'iMATter Chat Room',
+                body: 'There is a new message in the chat room',
+                sound: "default"
+            },
+        };
 
-		if(newChat.type === 'auto') {
-			return;
-		}
+        if(newChat.type === 'auto') {
+            return;
+        }
 
-	//	if(newChat.type !== 'auto'){
-			const ref = admin.firestore().collection('users').where('cohort', '==', newChat.cohort);
-			ref.get().then((result) => {
-				console.log('before iter', err);
-			//	if(newChat.type !== 'auto'){
-				result.forEach(doc => {
-					if(doc.get('chatNotif') === true && newChat.userID !== doc.get('code')) {
-						token = doc.get('token');
+    //	if(newChat.type !== 'auto'){
+            const ref = admin.firestore().collection('users').where('cohort', '==', newChat.cohort);
+            ref.get().then((result) => {
+                console.log('before iter', err);
+            //	if(newChat.type !== 'auto'){
+                result.forEach(doc => {
+                    if(doc.get('chatNotif') === true && newChat.userID !== doc.get('code')) {
+                        token = doc.get('token');
 
-						admin.messaging().sendToDevice(token, payload)
-							.then((response) => {
-								console.log('sent notification');
-								return payload;
-							}).catch((err) => {
-							console.log('entered doc, but did not send', err);
-						});
-					}
-				});
-			//	}
-				return 'true';
-			}).catch(error => {console.log('did not send', error)});
-		//}
-		return 'true';
-	});
+                        admin.messaging().sendToDevice(token, payload)
+                            .then((response) => {
+                                console.log('sent notification');
+                                return payload;
+                            }).catch((err) => {
+                            console.log('entered doc, but did not send', err);
+                        });
+                    }
+                });
+            //	}
+                return 'true';
+            }).catch(error => {console.log('did not send', error)});
+        //}
+        return 'true';
+    });
 */
 //works for BOTH administrators and provideres
 exports.sendProviderRecoveryEmail = functions.firestore.document('provider_recovery_email/{docID}').onCreate((snap, context) => {
@@ -549,8 +534,8 @@ exports.newLearningModuleNotification = functions.https.onRequest((req, res) => 
                                         console.log("New learning module notification sent successfully to " + singleUser.get("username"));
                                         return payload;
                                     }).catch((err) => {
-                                    console.log(err);
-                                });
+                                        console.log(err);
+                                    });
                             }
                         } else {
                             var daysStart = 7 * week; //number of days pregnant this module would start at
@@ -584,16 +569,16 @@ exports.newLearningModuleNotification = functions.https.onRequest((req, res) => 
                                             console.log("New learning module notification sent successfully to " + singleUser.get("username"));
                                             return payload;
                                         }).catch((err) => {
-                                        console.log(err);
-                                    });
+                                            console.log(err);
+                                        });
                                 }
                             }
                         }
                     });
                 });
                 //IMPORTANT: update the previousUserVisibility and userVisibility array
-                learningModules.doc(learningModule.id).update({previousUserVisibility: storedLMUserVisibility});
-                learningModules.doc(learningModule.id).update({userVisibility: lmUserVisibility});
+                learningModules.doc(learningModule.id).update({ previousUserVisibility: storedLMUserVisibility });
+                learningModules.doc(learningModule.id).update({ userVisibility: lmUserVisibility });
             });
         });
     }).then(() => {
@@ -649,8 +634,8 @@ exports.emotionSurveyNotification = functions.firestore.document('users/{userID}
                                 console.log("New survey notification sent successfully!");
                                 return payload;
                             }).catch((err) => {
-                            console.log(err);
-                        });
+                                console.log(err);
+                            });
 
                     }
                 }
@@ -735,14 +720,14 @@ exports.newSurveyNotification = functions.https.onRequest((req, res) => {
                                             console.log("New survey notification for After Joining sent successfully to " + singleUser.get("username"));
                                             return payload;
                                         }).catch((err) => {
-                                        console.log(err);
-                                    });
+                                            console.log(err);
+                                        });
                                 }
                             }
                         });
                     });
                     //IMPORTANT: Update the userVisibility array for this survey
-                    surveys.doc(singleSurvey.id).update({userVisibility: surveyVisibility});
+                    surveys.doc(singleSurvey.id).update({ userVisibility: surveyVisibility });
                 });
             } else if (surveyType == "Due Date") {
                 var dueDateDaysArray = singleSurvey.get("daysBeforeDueDate").split(/(?:,| )+/);
@@ -786,14 +771,14 @@ exports.newSurveyNotification = functions.https.onRequest((req, res) => {
                                             console.log("New survey notification for Due Date sent successfully to " + singleUser.get("username"));
                                             return payload;
                                         }).catch((err) => {
-                                        console.log(err);
-                                    });
+                                            console.log(err);
+                                        });
                                 }
                             }
                         }
                     });
                     //IMPORTANT: Update the userVisibility array for this survey
-                    surveys.doc(singleSurvey.id).update({userVisibility: surveyVisibility});
+                    surveys.doc(singleSurvey.id).update({ userVisibility: surveyVisibility });
                 });
             } else if (surveyType == "Inactive") {
                 var daysSinceLogin;
@@ -830,13 +815,13 @@ exports.newSurveyNotification = functions.https.onRequest((req, res) => {
                                         console.log("New survey notification for Inactivity sent successfully to " + singleUser.get("username"));
                                         return payload;
                                     }).catch((err) => {
-                                    console.log(err);
-                                });
+                                        console.log(err);
+                                    });
                             }
                         }
                     });
                     //IMPORTANT: Update the userVisibility array for this survey
-                    surveys.doc(singleSurvey.id).update({userVisibility: surveyVisibility});
+                    surveys.doc(singleSurvey.id).update({ userVisibility: surveyVisibility });
                 });
             }
         });
