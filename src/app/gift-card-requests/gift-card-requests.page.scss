@@ -1,0 +1,34 @@
+.label {
+  font-size: 16px;
+  color: #505050;
+  font-weight: bold;
+}
+
+.subheader {
+  --background: #f5f6f9;
+}
+
+.noHighlight {
+  --background: var(--secondary-color);
+}
+
+.timestamp {
+  color: gray;
+  font-size: 12px;
+}
+
+.my-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 20;
+  top: 0;
+  left: 0;
+}
+
+#requestDetails {
+    background-color: aliceblue;
+    width: 30%;
+    margin: auto;
+}

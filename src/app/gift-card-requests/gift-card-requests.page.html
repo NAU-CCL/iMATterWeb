@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Gift Card Requests
+    </ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-row>
+  <ion-col>
+    <ion-button class="fill-button" [class.noHighlight]="newRequests != true" expand="block" size="large" (click)="newRequests = true; pending = false; completed = false; selectedState = 'new'">New Requests</ion-button>
+  </ion-col>
+  <ion-col>
+    <ion-button class="fill-button" [class.noHighlight]="pending != true" expand="block" size="large" (click)="newRequests = false; pending = true; completed = false; selectedState = 'pending'">Pending Requests</ion-button>
+  </ion-col>
+  <ion-col>
+    <ion-button class="fill-button" [class.noHighlight]="completed != true" expand="block" size="large" (click)="newRequests = false; pending = false; completed = true; selectedState = 'complete'">Completed Requests</ion-button>
+  </ion-col>
+</ion-row>
+
+<ion-content>
+  <div>
+    <ion-item class="subheader">
+    <ion-label  *ngIf="newRequests" class="label">New Gift Card Requests</ion-label>
+    <ion-label  *ngIf="pending" class="label">Pending Gift Card Requests</ion-label>
+    <ion-label  *ngIf="completed" class="label">Completed Gift Card Requests</ion-label>
+    </ion-item>
+    <ion-list>
+        <ng-container  *ngFor="let request of (requests | async)">
+      <ion-item button *ngIf="request.state == selectedState" (click)="viewRequestDetails(request.id)">
+          {{ request.username }}
+          <ion-text slot="end" class="timestamp">
+            {{ request.timestamp.toDate() | date:'MM-dd-yyyy h:mm:ss.SS a' }}
+          </ion-text>
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-item>
+        </ng-container>
+    </ion-list>
+  </div>
+</ion-content>
+
+<div class="my-overlay" padding [hidden]="overlayHidden" *ngIf="viewRequest">
+  <ion-card id="requestDetails">
+    <ion-card-header class="ion-padding" style="background-color: var(--main-color); color: #f5f6f9" *ngIf="viewRequest.state=='new'">
+      New Gift Card Request
+    </ion-card-header>
+    <ion-card-header class="ion-padding" style="background-color: var(--main-color); color: #f5f6f9" *ngIf="viewRequest.state=='pending'">
+      Pending Gift Card Request
+    </ion-card-header>
+    <ion-card-header class="ion-padding" style="background-color: var(--main-color); color: #f5f6f9" *ngIf="viewRequest.state=='complete'">
+      Completed Gift Card Request
+    </ion-card-header>
+    <ion-card-title class="ion-padding">
+      <ion-row>
+        <h1>{{viewRequest.username}}</h1>
+      </ion-row>
+      <ion-row>
+        User Email: {{viewRequest.email}}
+      </ion-row>
+      <ion-row>
+        Gift Card Requested: {{viewRequest.gcType}}
+      </ion-row>
+      <ion-row>
+        Requested: {{ viewRequest.timestamp.toDate() | date:'MM-dd-yyyy h:mm:ss.SS a' }}
+      </ion-row>
+    </ion-card-title>
+    <ion-card-content>
+      <ion-row>
+        <ion-col *ngIf="viewRequest.state=='new'">
+          <ion-button color="success" style="width: 100%;" (click)="assign()">Assign To Me</ion-button>
+        </ion-col>
+        <ion-col *ngIf="viewRequest.state=='pending'">
+          <ion-button color="success" style="width: 100%;" (click)="complete()">Complete</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button color="danger" style="width: 100%;" (click)="hideOverlay()">Close</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</div>
+
