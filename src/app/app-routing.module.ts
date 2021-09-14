@@ -10,50 +10,62 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./handleUserPages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./handleUserPages/login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'code',
-    loadChildren: () => import('./handleUserPages/code/code.module').then( m => m.CodePageModule)
+    loadChildren: () => import('./handleUserPages/code/code.module').then(m => m.CodePageModule)
   },
   {
     path: 'profile',
-    loadChildren: () => import('./handleUserPages/profile/profile.module').then( m => m.ProfilePageModule)
+    loadChildren: () => import('./handleUserPages/profile/profile.module').then(m => m.ProfilePageModule)
   },
   {
     path: 'reset-password',
-    loadChildren: () => import('./handleUserPages/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
+    loadChildren: () => import('./handleUserPages/reset-password/reset-password.module').then(m => m.ResetPasswordPageModule)
   },
   {
     path: 'signup/:id', loadChildren: './handleUserPages/signup/signup.module#SignupPageModule'
   },
   {
     path: 'chatlog/:id',
-    loadChildren: () => import('./chatlog/chatlog.module').then( m => m.ChatlogPageModule)
+    loadChildren: () => import('./chatlog/chatlog.module').then(m => m.ChatlogPageModule)
   },
   {
     path: 'analytics',
-    loadChildren: () => import('./analytics/analytics.module').then( m => m.AnalyticsPageModule)
+    loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsPageModule)
   },
   {
     path: 'surveys',
-    loadChildren: () => import('./surveys/surveys.module').then( m => m.SurveysPageModule)
+    loadChildren: () => import('./surveys/surveys.module').then(m => m.SurveysPageModule)
   },
   {
     path: 'surveys/:id',
-    loadChildren: () => import('./surveys/surveys.module').then( m => m.SurveysPageModule)
+    loadChildren: () => import('./surveys/surveys.module').then(m => m.SurveysPageModule)
   },
   {
     path: 'survey-list',
-    loadChildren: () => import('./survey-list/survey-list.module').then( m => m.SurveyListPageModule)
+    loadChildren: () => import('./survey-list/survey-list.module').then(m => m.SurveyListPageModule)
   },
   {
+    path: 'surveys-v2',
+    loadChildren: () => import('./surveys-v2/surveys.module').then(m => m.SurveysPageModule)
+  },
+  {
+    path: 'survey/:id',
+    loadChildren: () => import('./surveys-v2/survey.module').then(m => m.SurveyPageModule)
+  },
+  // {
+  //   path: 'survey-list',
+  //   loadChildren: () => import('./survey-list/survey-list.module').then( m => m.SurveyListPageModule)
+  // },
+  {
     path: 'challenges',
-    loadChildren: () => import('./challenges/challenges.module').then( m => m.ChallengesPageModule)
+    loadChildren: () => import('./challenges/challenges.module').then(m => m.ChallengesPageModule)
   },
   {
     path: 'challengeTypes',
-    loadChildren: () => import('./challenges/types/challengeTypes.module').then( m => m.ChallengeTypesPageModule)
+    loadChildren: () => import('./challenges/types/challengeTypes.module').then(m => m.ChallengeTypesPageModule)
   },
   // {
   //   path: 'challenge/edit/:id',
@@ -70,7 +82,7 @@ const routes: Routes = [
   {
     path: 'learningmodules',
     loadChildren: () => import('./learningModule/learningmodules/learningmodules.module')
-        .then( m => m.LearningmodulesPageModule)
+      .then(m => m.LearningmodulesPageModule)
   },
   { path: 'forum', loadChildren: './forum/forum.module#ForumPageModule' },
   { path: 'forum/:id', loadChildren: './forum/forum-details/forum-details.module#ForumDetailsPageModule' },
@@ -78,7 +90,7 @@ const routes: Routes = [
 
   {
     path: 'provider-home',
-    loadChildren: () => import('./provider/provider-home/provider-home.module').then( m => m.ProviderHomePageModule)
+    loadChildren: () => import('./provider/provider-home/provider-home.module').then(m => m.ProviderHomePageModule)
   },
   {
     path: 'provider-profile',
@@ -87,32 +99,32 @@ const routes: Routes = [
   {
     path: 'learning-module-content',
     loadChildren: () => import('./learningModule/learning-module-content/learning-module-content.module')
-        .then( m => m.LearningModuleContentPageModule)
+      .then(m => m.LearningModuleContentPageModule)
   },
   {
     path: 'learning-module-content/:id',
     loadChildren: () => import('./learningModule/learning-module-content/learning-module-content.module')
-        .then( m => m.LearningModuleContentPageModule)
+      .then(m => m.LearningModuleContentPageModule)
   },
   {
     path: 'quiz-modal',
-    loadChildren: () => import('./learningModule/quiz-modal/quiz-modal.module').then( m => m.QuizModalPageModule)
+    loadChildren: () => import('./learningModule/quiz-modal/quiz-modal.module').then(m => m.QuizModalPageModule)
   },
   {
     path: 'quiz-modal/:id',
-    loadChildren: () => import('./learningModule/quiz-modal/quiz-modal.module').then( m => m.QuizModalPageModule)
+    loadChildren: () => import('./learningModule/quiz-modal/quiz-modal.module').then(m => m.QuizModalPageModule)
   },
   {
     path: 'add-quiz-question',
-    loadChildren: () => import('./learningModule/add-quiz-question/add-quiz-question.module').then( m => m.AddQuizQuestionPageModule)
+    loadChildren: () => import('./learningModule/add-quiz-question/add-quiz-question.module').then(m => m.AddQuizQuestionPageModule)
   },
   {
     path: 'viewable-profile/:id',
-    loadChildren: () => import('./viewable-profile/viewable-profile.module').then( m => m.ViewableProfilePageModule)
+    loadChildren: () => import('./viewable-profile/viewable-profile.module').then(m => m.ViewableProfilePageModule)
   },
   {
     path: 'chat-cohort-list',
-    loadChildren: () => import('./chat-cohort-list/chat-cohort-list.module').then( m => m.ChatCohortListPageModule)
+    loadChildren: () => import('./chat-cohort-list/chat-cohort-list.module').then(m => m.ChatCohortListPageModule)
   },
   {
     path: 'pregnancy-updates',
@@ -132,33 +144,33 @@ const routes: Routes = [
   },
   {
     path: 'inbox',
-    loadChildren: () => import('./inbox/inbox.module').then( m => m.InboxPageModule)
+    loadChildren: () => import('./inbox/inbox.module').then(m => m.InboxPageModule)
   },
   {
     path: 'mobile-settings',
-    loadChildren: () => import('./mobile-settings/mobile-settings.module').then( m => m.MobileSettingsPageModule)
+    loadChildren: () => import('./mobile-settings/mobile-settings.module').then(m => m.MobileSettingsPageModule)
   },
   {
     path: 'update-user/:userType/:id',
-    loadChildren: () => import('./handleUserPages/update-user/update-user.module').then( m => m.UpdateUserPageModule)
+    loadChildren: () => import('./handleUserPages/update-user/update-user.module').then(m => m.UpdateUserPageModule)
   },
   {
     path: 'recovery-code',
-    loadChildren: () => import('./handleUserPages/recovery-code/recovery-code.module').then( m => m.RecoveryCodePageModule)
+    loadChildren: () => import('./handleUserPages/recovery-code/recovery-code.module').then(m => m.RecoveryCodePageModule)
   },
   {
     path: 'provider-inbox',
-    loadChildren: () => import('./provider/provider-inbox/provider-inbox.module').then( m => m.ProviderInboxPageModule)
+    loadChildren: () => import('./provider/provider-inbox/provider-inbox.module').then(m => m.ProviderInboxPageModule)
   },
   {
     path: 'locations',
-    loadChildren: () => import('./locations/locations.module').then( m => m.LocationsPageModule)
+    loadChildren: () => import('./locations/locations.module').then(m => m.LocationsPageModule)
   }
   ,
   {
-   path: 'add-location',
-   loadChildren: () => import('./locations/add-location/add-location.module').then( m => m.AddLocationPageModule)
- }
+    path: 'add-location',
+    loadChildren: () => import('./locations/add-location/add-location.module').then(m => m.AddLocationPageModule)
+  }
 
 
 ];
@@ -169,4 +181,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
