@@ -1,0 +1,158 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{survey.type}} Survey</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<script async defer src="https://apis.google.com/js/api.js"></script>
+
+<ion-content>
+  <form (ngSubmit)="logForm()">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked"> Survey Title
+            </ion-label>
+            <ion-input name="title" [(ngModel)]="survey.title"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked"> Survey Description
+            </ion-label>
+            <ion-textarea name="description" [(ngModel)]="survey.description"></ion-textarea>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked"> Survey Link
+            </ion-label>
+            <ion-textarea name="link" [(ngModel)]="survey.link"></ion-textarea>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked"> Survey Points
+            </ion-label>
+            <ion-input type='number' name="points" [(ngModel)]="survey.points"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked">Importance
+            </ion-label>
+            <ion-select name="importance" [(ngModel)]="survey.importance" value="{{survey.importance}}">
+              <!-- <ng-container *ngFor="let type of (challengeTypes|async)"> -->
+              <ion-select-option value="low">Low</ion-select-option>
+              <ion-select-option value="high">High</ion-select-option>
+              <!-- </ng-container> -->
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="survey.characteristics != null && survey.type != 'Repeating'">
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked">
+              Days Until Expire
+            </ion-label>
+            <ion-input type="number" name="expire" [(ngModel)]="survey.characteristics['daysToExpire']"
+              value="{{survey.characteristics['daysToExpire']}}">
+            </ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="survey.characteristics != null && survey.type == 'Emotion Triggered'">
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked">
+              Emotion
+            </ion-label>
+            <ion-select name="emotion" [(ngModel)]="survey.characteristics['emotion']"
+              value="{{survey.characteristics['emotion']}}">
+              <!-- <ng-container *ngFor="let type of (challengeTypes|async)"> -->
+              <ion-select-option value="sad">Sad</ion-select-option>
+              <ion-select-option value="angry">Angry</ion-select-option>
+              <ion-select-option value="happy">Happy</ion-select-option>
+              <!-- </ng-container> -->
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="survey.characteristics != null && survey.type == 'Repeating'">
+        <ion-col size="3">
+          <ion-item>
+            <ion-label position="stacked">Interval</ion-label>
+            <ion-select id="repeatEvery" name='repeatEvery' [(ngModel)]="survey.characteristics['repeatEvery']"
+              value="{{survey.characteristics['repeatEvery']}}" (ionChange)="repeat()">
+              <ion-select-option value="daily">Daily</ion-select-option>
+              <ion-select-option value="weekly">Weekly</ion-select-option>
+              <ion-select-option value="monthly">Monthly</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col size="3">
+          <ion-item *ngIf="survey.characteristics['repeatEvery'] == 'weekly'">
+            <ion-label position="stacked">When</ion-label>
+            <ion-select name='display' [(ngModel)]="survey.characteristics['display']"
+              value="{{survey.characteristics['display']}}">
+              <ion-select-option value='monday'>Monday</ion-select-option>
+              <ion-select-option value='tuesday'>Tuesday</ion-select-option>
+              <ion-select-option value='wednesday'>Wednesday</ion-select-option>
+              <ion-select-option value='thursday'>Thursday</ion-select-option>
+              <ion-select-option value='friday'>Friday</ion-select-option>
+              <ion-select-option value='saturday'>Saturday</ion-select-option>
+              <ion-select-option value='sunday'>Sunday</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item *ngIf="survey.characteristics['repeatEvery'] == 'monthly'">
+            <ion-label position="stacked">When</ion-label>
+            <ion-input type='number' min=1 max=30 name='display' [(ngModel)]="survey.characteristics['display']"
+              value="{{survey.characteristics['display']}}"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="survey.characteristics != null && survey.type == 'Repeating'">
+        <ion-col size="6">
+          <ion-item>
+            <ion-label position="stacked">Stack Surveys</ion-label>
+            <ion-checkbox name='stacked' [(ngModel)]="survey.characteristics['stack']"></ion-checkbox>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-button type="submit" *ngIf="!survey.id">
+      Submit
+    </ion-button>
+
+    <ion-row *ngIf="survey.id">
+      <!-- Deletes Survey -->
+      <ion-col size="6">
+        <ion-button expand="block" fill="outline" color="danger" (click)="showToast('delete')">
+          <ion-icon name="trash" slot="start"></ion-icon>
+          Delete
+        </ion-button>
+      </ion-col>
+
+      <!-- Updates Survey -->
+      <ion-col size="6">
+        <ion-button expand="block" fill="solid" color="success" type="submit">
+          <ion-icon name="save" slot="start"></ion-icon>
+          Update
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Surveys</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<script async defer src="https://apis.google.com/js/api.js"></script>
+
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-button class="fill-button" [class.noHighlight]="view != 'manage'" (click)="view = 'manage'" expand="block"
+        size="large" (click)="view='manage';"> Manage </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button class="fill-button" [class.noHighlight]="view != 'schedule'" (click)="view = 'schedule'"
+        expand="block" size="large" (click)="view='schedule'"> Scheduler </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button class="fill-button" [class.noHighlight]="view != 'monitor'" (click)="view = 'monitor'" expand="block"
+        size="large" (click)="view = 'monitor';"> Monitor </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <div *ngIf="view == 'manage'">
+    <ion-item-divider class="custom-divider-header">
+      <ion-label>
+        After Joining Surveys
+      </ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let survey of (surveys | async)">
+      <ion-item button *ngIf="survey.type == 'Days After Joining'" [routerLink]="['/survey', survey.id]">
+        <ion-label>
+          {{ survey.title }}
+        </ion-label>
+      </ion-item>
+    </ng-container>
+    <ion-item button [routerLink]="['/survey', 'Days After Joining']">
+      <ion-icon name="add"></ion-icon>New Survey
+    </ion-item>
+    <ion-item-divider class="custom-divider-header">
+      <ion-label>
+        Repeating Surveys
+      </ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let survey of (surveys | async)">
+      <ion-item button *ngIf="survey.type == 'Repeating'" [routerLink]="['/survey', survey.id]">
+        <ion-label>
+          {{ survey.title }}
+        </ion-label>
+      </ion-item>
+    </ng-container>
+    <ion-item button [routerLink]="['/survey', 'Repeating']">
+      <ion-icon name="add"></ion-icon>New Survey
+    </ion-item>
+    <ion-item-divider class="custom-divider-header">
+      <ion-label>
+        Emotion Surveys
+      </ion-label>
+    </ion-item-divider>
+    <ng-container *ngFor="let survey of (surveys | async)">
+      <ion-item button *ngIf="survey.type == 'Emotion Triggered'" [routerLink]="['/survey', survey.id]">
+        <ion-label>
+          {{ survey.title }}
+        </ion-label>
+      </ion-item>
+    </ng-container>
+    <ion-item button [routerLink]="['/survey', 'Emotion Triggered']">
+      <ion-icon name="add"></ion-icon>New Survey
+    </ion-item>
+  </div>
+
+  <div *ngIf="view == 'schedule'">
+  </div>
+
+  <div *ngIf="view == 'monitor'">
+    <ion-list>
+      <ion-item>
+        <div>User <b>T-Honey</b> has not completed <b>Daily Survey</b> for <b>7 days</b>.</div>
+      </ion-item>
+      <ion-item>
+        <div>User <b>rosey</b> has not completed <b>Monday Survey</b> for <b>1 week</b>.</div>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
