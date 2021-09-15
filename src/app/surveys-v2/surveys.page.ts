@@ -5,6 +5,7 @@ import { SurveyService, Survey } from '../services/survey/survey.service';
 import { Observable } from 'rxjs';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 
