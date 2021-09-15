@@ -208,16 +208,19 @@ exports.updateDays = functions.https.onRequest((req, res) => {
                 var date = new Date();
                 var dayOfWeek = weekdays[date.getDay()];
                 var dayOfMonth = date.getDate();
-                if (characteristics['repeatEvery'] == 'weekly' && dayOfWeek == characteristics['display']) {
-                    availableSurveys.push(doc.get('id'));
-                } else if (characteristics['repeatEvery'] == 'monthy' && dayOfMonth == characteristics['display']) {
-                    availableSurveys.push(doc.get('id'));
-                } else if (characteristics['repeatEvery'] == 'daily') {
-                    availableSurveys.push(doc.get('id'));
+                if (characteristics['repeatEvery']) {
+                    if (characteristics['repeatEvery'] == 'weekly' && dayOfWeek == characteristics['display']) {
+                        availableSurveys.push(doc.get('id'));
+                    } else if (characteristics['repeatEvery'] == 'monthy' && dayOfMonth == characteristics['display']) {
+                        availableSurveys.push(doc.get('id'));
+                    } else if (characteristics['repeatEvery'] == 'daily') {
+                        availableSurveys.push(doc.get('id'));
+                    }
+                    currentUser.update({
+                        availableSurveys: availableSurveys
+                    });
                 }
-                currentUser.update({
-                    availableSurveys: availableSurveys
-                });
+
             }
         })
     })
