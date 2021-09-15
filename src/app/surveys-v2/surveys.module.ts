@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { SurveysPageRoutingModule } from './surveys-routing.module';
 
 import { SurveysPage } from './surveys.page';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -16,6 +17,7 @@ import { SurveysPage } from './surveys.page';
     FormsModule,
     IonicModule,
     SurveysPageRoutingModule,
+    RouterModule
   ],
   declarations: [SurveysPage]
 })

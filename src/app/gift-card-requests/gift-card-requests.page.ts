@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { GiftCardRequestsService, Request } from '../services/gift-card-requests/gift-card-requests.service';
 import { elementAt } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Survey, SurveyService } from '../services/survey/survey.service';
+import { CreateUserService, User } from '../services/createUsers/create-user.service';
 
 @Component({
   selector: 'app-gift-card-requests',
@@ -15,20 +17,22 @@ export class GiftCardRequestsPage implements OnInit {
   private userCode: string;
   private userEmail: string;
 
-  public newRequests: boolean;
-  public pending: boolean;
-  public completed: boolean;
+  public view = 'manage';
   public selectedState: string;
   public viewRequest: Request;
 
   public requests: Observable<Request[]>;
+  public surveys: Observable<Survey[]>;
+  public users: Observable<User[]>;
 
   overlayHidden: boolean = true;
 
   constructor(public router: Router,
     public storage: Storage,
     public gcService: GiftCardRequestsService,
-    public afs: AngularFirestore) {
+    public afs: AngularFirestore,
+    public surveyService: SurveyService,
+    public userService: CreateUserService) {
   }
 
   ngOnInit() {
@@ -44,11 +48,12 @@ export class GiftCardRequestsPage implements OnInit {
         });
       }
     });
-    
+
     this.requests = this.gcService.getRequests();
-    this.newRequests = true;
-    this.pending = false;
-    this.completed = false;
+    this.surveys = this.surveyService.getSurveys();
+    this.users = this.userService.getUsers();
+    console.log("users: \n" + this.users);
+
     this.selectedState = 'new';
   }
 
