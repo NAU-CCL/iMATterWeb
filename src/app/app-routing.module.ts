@@ -147,6 +147,10 @@ const routes: Routes = [
     loadChildren: () => import('./inbox/inbox.module').then(m => m.InboxPageModule)
   },
   {
+    path: 'gift-card-requests',
+    loadChildren: () => import('./gift-card-requests/gift-card-requests.module').then( m => m.GiftCardRequestsPageModule)
+  },
+  {
     path: 'mobile-settings',
     loadChildren: () => import('./mobile-settings/mobile-settings.module').then(m => m.MobileSettingsPageModule)
   },
