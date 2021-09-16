@@ -204,7 +204,7 @@ exports.updateDays = functions.https.onRequest((req, res) => {
                 var weekdays = new Array(
                     "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"
                 );
-                var characteristics = doc.get('characteristcs');
+                var characteristics = doc.get('characteristics');
                 var date = new Date();
                 var dayOfWeek = weekdays[date.getDay()];
                 var dayOfMonth = date.getDate();

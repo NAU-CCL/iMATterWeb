@@ -17,7 +17,6 @@ import { RouterModule } from '@angular/router';
     FormsModule,
     IonicModule,
     SurveysPageRoutingModule,
-    RouterModule
   ],
   declarations: [SurveysPage]
 })
