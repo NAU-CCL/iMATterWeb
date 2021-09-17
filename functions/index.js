@@ -216,15 +216,14 @@ exports.updateDays = functions.https.onRequest((req, res) => {
                     } else if (characteristics['repeatEvery'] == 'daily') {
                         availableSurveys.push(doc.get('id'));
                     }
-                    currentUser.update({
-                        availableSurveys: availableSurveys
-                    });
                 }
 
             }
         })
     })
-
+    currentUser.update({
+        availableSurveys: availableSurveys
+    })
 });
 
 exports.sendInfoDeskNotification =
