@@ -1,12 +1,15 @@
 /// <reference types="@types/gapi.auth2" />
 
-import { Component, OnInit } from '@angular/core';
+import { CalendarComponent } from 'ionic2-calendar/calendar';
+import { Component, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { SurveyService, Survey } from '../services/survey/survey.service';
 import { Observable } from 'rxjs';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import * as moment from 'moment';
+import { formatDate } from '@angular/common';
 
 declare var gapi: any;
 
@@ -17,17 +20,29 @@ declare var gapi: any;
 })
 
 export class SurveysPage implements OnInit {
+    eventSource = [];
+    viewTitle: string;
+
+    calendar = {
+        mode: 'month',
+        currentDate: new Date(),
+    };
+
+    selectedDate: Date;
     public view = 'manage';
 
     public surveys: Observable<Survey[]>;
 
+    myCal: CalendarComponent;
 
     constructor(
         private surveyService: SurveyService,
         private storage: Storage,
         private router: Router,
         private toastCtrl: ToastController,
-        private http: HttpClient) {
+        private http: HttpClient,
+        private alertCtrl: AlertController,
+        @Inject(LOCALE_ID) private locale: string) {
     }
 
     ngOnInit() {
@@ -96,5 +111,98 @@ export class SurveysPage implements OnInit {
                     console.error("Execute error", err);
                     //this.showToast('There was an error sending survey notifications.');
                 });
+    }
+
+    next() {
+        this.myCal.slideNext();
+    }
+
+    back() {
+        this.myCal.slidePrev();
+    }
+
+    // Selected date reange and hence title changed
+    onViewTitleChanged(title) {
+        this.viewTitle = title;
+    }
+
+    // Calendar event was clicked
+    async onEventSelected(event) {
+        // Use Angular date pipe for conversion
+        let start = formatDate(event.startTime, 'medium', this.locale);
+        let end = formatDate(event.endTime, 'medium', this.locale);
+
+        const alert = await this.alertCtrl.create({
+            header: event.title,
+            subHeader: event.desc,
+            message: 'From: ' + start + '<br><br>To: ' + end,
+            buttons: ['OK'],
+        });
+        alert.present();
+    }
+
+    createRandomEvents() {
+        var events = [];
+        for (var i = 0; i < 50; i += 1) {
+            var date = new Date();
+            var eventType = Math.floor(Math.random() * 2);
+            var startDay = Math.floor(Math.random() * 90) - 45;
+            var endDay = Math.floor(Math.random() * 2) + startDay;
+            var startTime;
+            var endTime;
+            if (eventType === 0) {
+                startTime = new Date(
+                    Date.UTC(
+                        date.getUTCFullYear(),
+                        date.getUTCMonth(),
+                        date.getUTCDate() + startDay
+                    )
+                );
+                if (endDay === startDay) {
+                    endDay += 1;
+                }
+                endTime = new Date(
+                    Date.UTC(
+                        date.getUTCFullYear(),
+                        date.getUTCMonth(),
+                        date.getUTCDate() + endDay
+                    )
+                );
+                events.push({
+                    title: 'All Day - ' + i,
+                    startTime: startTime,
+                    endTime: endTime,
+                    allDay: true,
+                });
+            } else {
+                var startMinute = Math.floor(Math.random() * 24 * 60);
+                var endMinute = Math.floor(Math.random() * 180) + startMinute;
+                startTime = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate() + startDay,
+                    0,
+                    date.getMinutes() + startMinute
+                );
+                endTime = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate() + endDay,
+                    0,
+                    date.getMinutes() + endMinute
+                );
+                events.push({
+                    title: 'Event - ' + i,
+                    startTime: startTime,
+                    endTime: endTime,
+                    allDay: false,
+                });
+            }
+        }
+        this.eventSource = events;
+    }
+
+    removeEvents() {
+        this.eventSource = [];
     }
 }
