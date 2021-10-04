@@ -9,7 +9,10 @@ admin.initializeApp(functions.config().firebase);
 //admin.initializeApp();
 require('dotenv').config();
 
-const { SENDER_EMAIL, SENDER_PASS } = process.env;
+const {
+    SENDER_EMAIL,
+    SENDER_PASS
+} = process.env;
 
 exports.sendEmailNotification = functions.https.onRequest((req, res) => {
     let authData = nodemailer.createTransport({
@@ -94,8 +97,8 @@ exports.sendGCRequestEmail = functions.firestore.document('usersPointsRedeem/{do
         to: email, // admin set receiver
         subject: "iMATter Gift Card Request", // Subject line
         text: "There is a new request for a gift card.", // plain text body
-        html: "User " + data.username + " with the email: " + data.email + " has redeemed points for a(n) " + data.gcType
-            + "gift card."// html body
+        html: "User " + data.username + " with the email: " + data.email + " has redeemed points for a(n) " + data.gcType +
+            "gift card." // html body
     }).then(res => console.log('successfully sent that mail')).catch(err => console.log(err));
 
 });
@@ -105,7 +108,6 @@ exports.sendGCRequestEmail = functions.firestore.document('usersPointsRedeem/{do
  * Days a user, totalDaysPregnant, daysPregnant, daysSinceLogin, and weeksPregnant
  */
 exports.updateDays = functions.https.onRequest((req, res) => {
-
     const ref = admin.firestore().collection('users');
     ref.get().then((result) => {
         result.forEach(doc => {
@@ -152,78 +154,45 @@ exports.updateDays = functions.https.onRequest((req, res) => {
             currentUser.update({
                 joinedChallenges: updateJoinedChallenges
             });
+
+            //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
+            var number = Math.random();
+            res.send("days have been updated" + number);
+
+            return null;
+        }).catch(err => {
+
+            res.send("failed: " + err)
         });
 
-        //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
-        var number = Math.random();
-        res.send("days have been updated" + number);
-
-        return null;
-    }).catch(err => {
-
-        res.send("failed: " + err)
-    });
-
-    // get random quote of the day
-    const quotes = [];
-    let homeQuote = '';
-    const imgs = admin.firestore().collection('quotes');
-    imgs.get().then(result => {
-        result.forEach(doc => {
-            quotes.push(doc.get('picture'));
+        // get random quote of the day
+        const quotes = [];
+        let homeQuote = '';
+        const imgs = admin.firestore().collection('quotes');
+        imgs.get().then(result => {
+            result.forEach(doc => {
+                quotes.push(doc.get('picture'));
+            });
+            const randIndex = Math.floor(Math.random() * Math.floor(quotes.length));
+            homeQuote = quotes[randIndex];
+            return null;
+        }).catch(err => {
+            console.log("Failed: " + err);
         });
-        const randIndex = Math.floor(Math.random() * Math.floor(quotes.length));
-        homeQuote = quotes[randIndex];
-        return null;
-    }).catch(err => {
-        console.log("Failed: " + err);
-    });
 
-    const home = admin.firestore().collection('homeQuote');
-    home.get().then(result => {
-        result.forEach(doc => {
-            result.quote = homeQuote;
+        const home = admin.firestore().collection('homeQuote');
+        home.get().then(result => {
+            result.forEach(doc => {
+                result.quote = homeQuote;
+            });
+            return null;
+        }).catch(err => {
+            console.log('Failed: ' + err);
         });
-        return null;
-    }).catch(err => {
-        console.log('Failed: ' + err);
+
+
+
     });
-
-
-    // check for available surveys
-    const surveys = admin.firestore().collection('surveys-v2');
-    const availableSurveys = [];
-    surveys.get().then(result => {
-        result.forEach(doc => {
-            if (doc.get('type') == 'Days After Joining') {
-                var characteristics = doc.get('characteristcs');
-                if (currentUser.daysAUser >= characteristics['daysAfterJoining']) {
-                    availableSurveys.push(doc.get('id'));
-                }
-            } else if (doc.get('type') == 'Repeating') {
-                var weekdays = new Array(
-                    "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"
-                );
-                var characteristics = doc.get('characteristics');
-                var date = new Date();
-                var dayOfWeek = weekdays[date.getDay()];
-                var dayOfMonth = date.getDate();
-                if (characteristics['repeatEvery']) {
-                    if (characteristics['repeatEvery'] == 'weekly' && dayOfWeek == characteristics['display']) {
-                        availableSurveys.push(doc.get('id'));
-                    } else if (characteristics['repeatEvery'] == 'monthy' && dayOfMonth == characteristics['display']) {
-                        availableSurveys.push(doc.get('id'));
-                    } else if (characteristics['repeatEvery'] == 'daily') {
-                        availableSurveys.push(doc.get('id'));
-                    }
-                }
-
-            }
-        })
-    })
-    currentUser.update({
-        availableSurveys: availableSurveys
-    })
 });
 
 exports.sendInfoDeskNotification =
@@ -579,8 +548,12 @@ exports.newLearningModuleNotification = functions.https.onRequest((req, res) => 
                     });
                 });
                 //IMPORTANT: update the previousUserVisibility and userVisibility array
-                learningModules.doc(learningModule.id).update({ previousUserVisibility: storedLMUserVisibility });
-                learningModules.doc(learningModule.id).update({ userVisibility: lmUserVisibility });
+                learningModules.doc(learningModule.id).update({
+                    previousUserVisibility: storedLMUserVisibility
+                });
+                learningModules.doc(learningModule.id).update({
+                    userVisibility: lmUserVisibility
+                });
             });
         });
     }).then(() => {
@@ -729,7 +702,9 @@ exports.newSurveyNotification = functions.https.onRequest((req, res) => {
                         });
                     });
                     //IMPORTANT: Update the userVisibility array for this survey
-                    surveys.doc(singleSurvey.id).update({ userVisibility: surveyVisibility });
+                    surveys.doc(singleSurvey.id).update({
+                        userVisibility: surveyVisibility
+                    });
                 });
             } else if (surveyType == "Due Date") {
                 var dueDateDaysArray = singleSurvey.get("daysBeforeDueDate").split(/(?:,| )+/);
@@ -780,7 +755,9 @@ exports.newSurveyNotification = functions.https.onRequest((req, res) => {
                         }
                     });
                     //IMPORTANT: Update the userVisibility array for this survey
-                    surveys.doc(singleSurvey.id).update({ userVisibility: surveyVisibility });
+                    surveys.doc(singleSurvey.id).update({
+                        userVisibility: surveyVisibility
+                    });
                 });
             } else if (surveyType == "Inactive") {
                 var daysSinceLogin;
@@ -823,7 +800,9 @@ exports.newSurveyNotification = functions.https.onRequest((req, res) => {
                         }
                     });
                     //IMPORTANT: Update the userVisibility array for this survey
-                    surveys.doc(singleSurvey.id).update({ userVisibility: surveyVisibility });
+                    surveys.doc(singleSurvey.id).update({
+                        userVisibility: surveyVisibility
+                    });
                 });
             }
         });

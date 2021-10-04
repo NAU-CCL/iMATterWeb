@@ -28,6 +28,7 @@ export class SurveyPage implements OnInit {
         description: '',
         title: '',
         link: '',
+        adminLink: '',
         points: 0,
         importance: '',
         characteristics: {}
@@ -87,6 +88,12 @@ export class SurveyPage implements OnInit {
         const repeatVal = document.getElementById("repeatEvery") as HTMLInputElement;
         console.log(repeatVal.value);
         this.survey.characteristics['repeatEvery'] = repeatVal.value;
+    }
+
+    delete(id) {
+        this.surveyService.deleteSurvey(id);
+        this.router.navigate(['/surveys-v2/']);
+        this.showToast("Survey successfully deleted.")
     }
 
     showToast(msg: string) {

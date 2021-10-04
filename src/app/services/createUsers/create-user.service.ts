@@ -73,59 +73,59 @@ export class CreateUserService {
   constructor(private afs: AngularFirestore) {
     this.userCollection = this.afs.collection<User>('users', ref => ref.orderBy('username', 'asc'));
     this.users = this.userCollection.snapshotChanges().pipe(
-        map(actions => {
-          return actions.map(a => {
-            const data = a.payload.doc.data();
-            const id = a.payload.doc.id;
-            return {id, ...data};
-          });
-        })
+      map(actions => {
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        });
+      })
     );
 
     this.providerCollection = this.afs.collection<Provider>('providers');
     this.providers = this.providerCollection.snapshotChanges().pipe(
-        map(actions => {
-          return actions.map(a => {
-            const data = a.payload.doc.data();
-            const id = a.payload.doc.id;
-            return {id, ...data};
-          });
-        })
+      map(actions => {
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        });
+      })
     );
 
     this.adminCollection = this.afs.collection<Admin>('admins');
     this.admins = this.adminCollection.snapshotChanges().pipe(
-        map(actions => {
-          return actions.map(a => {
-            const data = a.payload.doc.data();
-            const id = a.payload.doc.id;
-            return {id, ...data};
-          });
-        })
+      map(actions => {
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        });
+      })
     );
   }
 
   getEmptyUsers(): Observable<User[]> {
     this.emptyUserCollection = this.afs.collection<User>('users', ref => ref.where('joined', '==', null));
     this.emptyUsers = this.emptyUserCollection.snapshotChanges().pipe(
-        map(actions => {
-          return actions.map(a => {
-            const data = a.payload.doc.data();
-            const id = a.payload.doc.id;
-            return {id, ...data};
-          });
-        })
+      map(actions => {
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        });
+      })
     );
     return this.emptyUsers;
   }
 
   getEmptyUser(id: string): Observable<User> {
     return this.emptyUserCollection.doc<User>(id).valueChanges().pipe(
-        take(1),
-        map(user => {
-          user.id = id;
-          return user;
-        })
+      take(1),
+      map(user => {
+        user.id = id;
+        return user;
+      })
     );
   }
 
@@ -139,20 +139,27 @@ export class CreateUserService {
 
   getUser(id: string): Observable<User> {
     return this.userCollection.doc<User>(id).valueChanges().pipe(
-        take(1),
-        map(user => {
-          user.id = id;
-          return user;
-        })
+      take(1),
+      map(user => {
+        user.id = id;
+        return user;
+      })
     );
   }
 
   updateUser(userID: string, user: User): Promise<void> {
     return this.afs.firestore.collection('users').doc(userID).update({
-          email: user.email,
-          cohort: user.cohort,
-          points: user.points,
-          notes: user.notes});
+      email: user.email,
+      cohort: user.cohort,
+      points: user.points,
+      notes: user.notes
+    });
+  }
+
+  updateUserPoints(userID: string, points: number): Promise<void> {
+    return this.afs.firestore.collection('users').doc(userID).update({
+      points: points
+    })
   }
 
   deleteUser(id: string): Promise<void> {
@@ -160,7 +167,7 @@ export class CreateUserService {
   }
 
   addUser(user: User): Promise<void> {
-    return this.userCollection.doc(user.code).set({code: user.code, joined: null, codeEntered: false, notes: user.notes});
+    return this.userCollection.doc(user.code).set({ code: user.code, joined: null, codeEntered: false, notes: user.notes });
   }
 
   getProviders(): Observable<Provider[]> {
@@ -169,21 +176,22 @@ export class CreateUserService {
 
   getProvider(id: string): Observable<Provider> {
     return this.providerCollection.doc<Provider>(id).valueChanges().pipe(
-        take(1),
-        map(provider => {
-          provider.id = id;
-          return provider;
-        })
+      take(1),
+      map(provider => {
+        provider.id = id;
+        return provider;
+      })
     );
   }
 
   updateProvider(providerID: string, provider: Provider): Promise<void> {
     return this.afs.firestore.collection('providers').doc(providerID).update({
-          email: provider.email,
-          firstName: provider.firstName,
-          lastName: provider.lastName,
-          notes: provider.notes,
-          providerType: provider.providerType});
+      email: provider.email,
+      firstName: provider.firstName,
+      lastName: provider.lastName,
+      notes: provider.notes,
+      providerType: provider.providerType
+    });
   }
 
   deleteProvider(id: string): Promise<void> {
@@ -202,7 +210,7 @@ export class CreateUserService {
       providerType: provider.providerType,
       codeEntered: false,
       notes: provider.notes
-    }, {merge: true});
+    }, { merge: true });
   }
 
 
@@ -212,17 +220,18 @@ export class CreateUserService {
 
   getAdmin(id: string): Observable<Admin> {
     return this.adminCollection.doc<Admin>(id).valueChanges().pipe(
-        take(1),
-        map(admin => {
-          admin.id = id;
-          return admin;
-        })
+      take(1),
+      map(admin => {
+        admin.id = id;
+        return admin;
+      })
     );
   }
 
   updateAdmin(adminID: string, admin: Admin): Promise<void> {
     return this.afs.firestore.collection('admins').doc(adminID).update({
-          notes: admin.notes});
+      notes: admin.notes
+    });
   }
 
   deleteAdmin(id: string): Promise<void> {
@@ -231,11 +240,13 @@ export class CreateUserService {
 
   addAdmin(admin: Admin): Promise<void> {
     return this.adminCollection.doc(admin.code)
-        .set({code: admin.code,
-              email: admin.email,
-              type: admin.type,
-              codeEntered: false,
-              notes: admin.notes},
+      .set({
+        code: admin.code,
+        email: admin.email,
+        type: admin.type,
+        codeEntered: false,
+        notes: admin.notes
+      },
         { merge: true });
   }
 }

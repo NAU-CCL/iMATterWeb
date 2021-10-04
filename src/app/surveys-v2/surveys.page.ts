@@ -1,15 +1,18 @@
 /// <reference types="@types/gapi.auth2" />
 
-import { CalendarComponent } from 'ionic2-calendar/calendar';
+import { CalendarComponent, CalendarMode, Step } from 'ionic2-calendar/calendar';
 import { Component, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { SurveyService, Survey } from '../services/survey/survey.service';
-import { Observable } from 'rxjs';
+import { Observable, VirtualTimeScheduler } from 'rxjs';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
 import { formatDate } from '@angular/common';
+import { User, UserService } from '../services/user/user.service'
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { elementAt } from 'rxjs/operators';
 
 declare var gapi: any;
 
@@ -20,20 +23,33 @@ declare var gapi: any;
 })
 
 export class SurveysPage implements OnInit {
+    eventHidden: boolean = true;
+    currentEvent: any;
+
     eventSource = [];
     viewTitle: string;
 
     calendar = {
-        mode: 'month',
+        mode: 'month' as CalendarMode,
         currentDate: new Date(),
+        step: 30 as Step,
+        locale: 'en-GB',
+        allDayLabel: 'Completed Survey'
     };
 
     selectedDate: Date;
     public view = 'manage';
 
     public surveys: Observable<Survey[]>;
+    public weeklySurveys: Survey[] = [];
+    public monthlySurveys: Survey[] = [];
 
-    myCal: CalendarComponent;
+    public users: Observable<User[]>;
+    public currentUser: any;
+
+    public title: string;
+
+    @ViewChild(CalendarComponent, { static: false }) myCal: CalendarComponent;
 
     constructor(
         private surveyService: SurveyService,
@@ -42,7 +58,8 @@ export class SurveysPage implements OnInit {
         private toastCtrl: ToastController,
         private http: HttpClient,
         private alertCtrl: AlertController,
-        @Inject(LOCALE_ID) private locale: string) {
+        private userService: UserService,
+        @Inject(LOCALE_ID) private locale: string,) {
     }
 
     ngOnInit() {
@@ -61,10 +78,27 @@ export class SurveysPage implements OnInit {
 
         this.surveys = this.surveyService.getSurveys();
 
+        this.surveys.forEach(surveyArray => {
+            surveyArray.forEach(survey => {
+                // console.log(survey);
+                if (survey.type == 'Repeating') {
+                    if (survey.characteristics['repeatEvery'] == 'monthly') {
+                        console.log(survey.characteristics['display']);
+                        this.monthlySurveys.push(survey);
+                    }
+                    else if (survey.characteristics['repeatEvery'] == 'weekly') {
+                        console.log(survey.characteristics['display']);
+                        this.weeklySurveys.push(survey);
+                    }
+                }
+            });
+        });
+
+        this.getUserEvents();
+
         gapi.load("client:auth2", function () {
             gapi.auth2.init({ client_id: "626066789753-d0jm6t0ape6tnfvomv2ojuvf73glllk5.apps.googleusercontent.com" });
         });
-
     }
 
     showToast(msg: string) {
@@ -128,81 +162,52 @@ export class SurveysPage implements OnInit {
 
     // Calendar event was clicked
     async onEventSelected(event) {
+        console.log(event);
+        this.currentEvent = event;
+
         // Use Angular date pipe for conversion
-        let start = formatDate(event.startTime, 'medium', this.locale);
-        let end = formatDate(event.endTime, 'medium', this.locale);
+        let start = formatDate(event.startTime, 'medium', this.calendar.locale);
+        let end = formatDate(event.endTime, 'medium', this.calendar.locale);
 
-        const alert = await this.alertCtrl.create({
-            header: event.title,
-            subHeader: event.desc,
-            message: 'From: ' + start + '<br><br>To: ' + end,
-            buttons: ['OK'],
-        });
-        alert.present();
+        console.log('Start: ' + start + '\nEnd: ' + end);
+
+        this.eventHidden = false;
     }
 
-    createRandomEvents() {
-        var events = [];
-        for (var i = 0; i < 50; i += 1) {
-            var date = new Date();
-            var eventType = Math.floor(Math.random() * 2);
-            var startDay = Math.floor(Math.random() * 90) - 45;
-            var endDay = Math.floor(Math.random() * 2) + startDay;
-            var startTime;
-            var endTime;
-            if (eventType === 0) {
-                startTime = new Date(
-                    Date.UTC(
-                        date.getUTCFullYear(),
-                        date.getUTCMonth(),
-                        date.getUTCDate() + startDay
-                    )
-                );
-                if (endDay === startDay) {
-                    endDay += 1;
-                }
-                endTime = new Date(
-                    Date.UTC(
-                        date.getUTCFullYear(),
-                        date.getUTCMonth(),
-                        date.getUTCDate() + endDay
-                    )
-                );
-                events.push({
-                    title: 'All Day - ' + i,
-                    startTime: startTime,
-                    endTime: endTime,
-                    allDay: true,
-                });
-            } else {
-                var startMinute = Math.floor(Math.random() * 24 * 60);
-                var endMinute = Math.floor(Math.random() * 180) + startMinute;
-                startTime = new Date(
-                    date.getFullYear(),
-                    date.getMonth(),
-                    date.getDate() + startDay,
-                    0,
-                    date.getMinutes() + startMinute
-                );
-                endTime = new Date(
-                    date.getFullYear(),
-                    date.getMonth(),
-                    date.getDate() + endDay,
-                    0,
-                    date.getMinutes() + endMinute
-                );
-                events.push({
-                    title: 'Event - ' + i,
-                    startTime: startTime,
-                    endTime: endTime,
-                    allDay: false,
-                });
-            }
-        }
-        this.eventSource = events;
-    }
-
-    removeEvents() {
+    getUserEvents() {
         this.eventSource = [];
+
+        this.users = this.userService.getUsers();
+        this.users.forEach(userArray => {
+            userArray.forEach(user => {
+                if (user.answeredSurveys !== undefined) {
+                    user.answeredSurveys.forEach(survey => {
+                        var endTime = new Date(survey.date + 'T17:00:00');
+                        var startTime = new Date(survey.date + 'T17:00:00');
+                        startTime.setDate(startTime.getDate() - 1);
+                        this.surveyService.getSurvey(survey.survey).subscribe(event => {
+                            this.eventSource.push({
+                                title: user.username + ": " + event.title,
+                                adminLink: event.adminLink,
+                                startTime: startTime,
+                                endTime: endTime,
+                                allDay: true,
+                            });
+                            this.myCal.loadEvents();
+                        });
+                    });
+                }
+
+            });
+        });
+    }
+
+    scheduledSurveys() {
+        console.log(this.weeklySurveys);
+        console.log(this.monthlySurveys);
+    }
+
+    hideOverlay() {
+        this.eventHidden = true;
     }
 }

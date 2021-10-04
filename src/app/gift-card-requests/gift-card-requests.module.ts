@@ -17,4 +17,4 @@ import { GiftCardRequestsPage } from './gift-card-requests.page';
   ],
   declarations: [GiftCardRequestsPage]
 })
-export class GiftCardRequestsPageModule {}
+export class GiftCardRequestsPageModule { }

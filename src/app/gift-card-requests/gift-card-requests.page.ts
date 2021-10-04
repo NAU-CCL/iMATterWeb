@@ -7,6 +7,7 @@ import { elementAt } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Survey, SurveyService } from '../services/survey/survey.service';
 import { CreateUserService, User } from '../services/createUsers/create-user.service';
+import { EmailComposer } from '@ionic-native/email-composer'
 
 @Component({
   selector: 'app-gift-card-requests',
@@ -21,18 +22,22 @@ export class GiftCardRequestsPage implements OnInit {
   public selectedState: string;
   public viewRequest: Request;
 
+  public viewUser: User;
+
   public requests: Observable<Request[]>;
   public surveys: Observable<Survey[]>;
   public users: Observable<User[]>;
 
   overlayHidden: boolean = true;
+  userDetailsHidden: boolean = true;
 
   constructor(public router: Router,
     public storage: Storage,
     public gcService: GiftCardRequestsService,
     public afs: AngularFirestore,
     public surveyService: SurveyService,
-    public userService: CreateUserService) {
+    public userService: CreateUserService,
+    private emailComposer: EmailComposer) {
   }
 
   ngOnInit() {
@@ -64,6 +69,13 @@ export class GiftCardRequestsPage implements OnInit {
     console.log(this.viewRequest);
   }
 
+  viewUserDetails(id) {
+    const user = this.userService.getUser(id);
+    user.subscribe(event => this.viewUser = event);
+    this.userDetailsHidden = false;
+    console.log(this.viewUser);
+  }
+
   public assign() {
     this.gcService.updateRequest(this.viewRequest.id, "pending");
     this.hideOverlay();
@@ -76,6 +88,17 @@ export class GiftCardRequestsPage implements OnInit {
 
   public hideOverlay() {
     this.overlayHidden = true;
+    this.userDetailsHidden = true;
   }
 
+  public updatePoints() {
+    console.log(this.viewUser);
+    const points = (document.getElementById("newPoints") as HTMLInputElement).value;
+
+    this.userService.updateUserPoints(this.viewUser.id, +points);
+  }
+
+  notifyUser() {
+
+  }
 }

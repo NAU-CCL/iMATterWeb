@@ -11,6 +11,7 @@ export interface Survey {
     description: string;
     title: string;
     link: string;
+    adminLink: string;
     points: number;
     importance: string;
     characteristics: any;

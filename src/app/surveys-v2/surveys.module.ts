@@ -25,7 +25,7 @@ registerLocaleData(localeDe);
   ],
   declarations: [SurveysPage],
   providers: [
-    { provide: LOCALE_ID, useValue: 'de-DE' }
+    { provide: LOCALE_ID, useValue: 'de-DE' },
   ]
 })
 export class SurveysPageModule { }

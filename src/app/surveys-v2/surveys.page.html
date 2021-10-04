@@ -15,10 +15,10 @@
       <ion-button class="fill-button" [class.noHighlight]="view != 'manage'" (click)="view = 'manage'" expand="block"
         size="large" (click)="view='manage';"> Manage </ion-button>
     </ion-col>
-    <ion-col>
+    <!-- <ion-col>
       <ion-button class="fill-button" [class.noHighlight]="view != 'schedule'" (click)="view = 'schedule'"
         expand="block" size="large" (click)="view='schedule'"> Scheduler </ion-button>
-    </ion-col>
+    </ion-col> -->
     <ion-col>
       <ion-button class="fill-button" [class.noHighlight]="view != 'monitor'" (click)="view = 'monitor'" expand="block"
         size="large" (click)="view = 'monitor';"> Monitor </ion-button>
@@ -26,112 +26,107 @@
   </ion-row>
 
   <div *ngIf="view == 'manage'">
-    <ion-item-divider class="custom-divider-header">
-      <ion-label>
-        After Joining Surveys
-      </ion-label>
-    </ion-item-divider>
-    <ng-container *ngFor="let survey of (surveys | async)">
-      <ion-item button *ngIf="survey.type == 'Days After Joining'" [routerLink]="['/survey', survey.id]">
-        <ion-label>
-          {{ survey.title }}
-        </ion-label>
-      </ion-item>
-    </ng-container>
-    <ion-item button [routerLink]="['/survey', 'Days After Joining']">
-      <ion-icon name="add"></ion-icon>New Survey
-    </ion-item>
-    <ion-item-divider class="custom-divider-header">
-      <ion-label>
-        Repeating Surveys
-      </ion-label>
-    </ion-item-divider>
-    <ng-container *ngFor="let survey of (surveys | async)">
-      <ion-item button *ngIf="survey.type == 'Repeating'" [routerLink]="['/survey', survey.id]">
-        <ion-label>
-          {{ survey.title }}
-        </ion-label>
-      </ion-item>
-    </ng-container>
-    <ion-item button [routerLink]="['/survey', 'Repeating']">
-      <ion-icon name="add"></ion-icon>New Survey
-    </ion-item>
-    <ion-item-divider class="custom-divider-header">
-      <ion-label>
-        Emotion Surveys
-      </ion-label>
-    </ion-item-divider>
-    <ng-container *ngFor="let survey of (surveys | async)">
-      <ion-item button *ngIf="survey.type == 'Emotion Triggered'" [routerLink]="['/survey', survey.id]">
-        <ion-label>
-          {{ survey.title }}
-        </ion-label>
-      </ion-item>
-    </ng-container>
-    <ion-item button [routerLink]="['/survey', 'Emotion Triggered']">
-      <ion-icon name="add"></ion-icon>New Survey
-    </ion-item>
+    <div>
+      <ion-grid>
+        <ion-row>
+          <ion-col size=3>
+            <div id="listCont">
+              <ion-item-divider class="custom-divider-header">
+                <ion-label class="listLabel">
+                  After Joining Surveys
+                </ion-label>
+              </ion-item-divider>
+              <ng-container *ngFor="let survey of (surveys | async)">
+                <ion-item button *ngIf="survey.type == 'Days After Joining'" [routerLink]="['/survey', survey.id]">
+                  <ion-label>
+                    {{ survey.title }}
+                  </ion-label>
+                </ion-item>
+              </ng-container>
+              <ion-item button [routerLink]="['/survey', 'Days After Joining']">
+                <ion-icon name="add"></ion-icon>New Survey
+              </ion-item>
+              <ion-item-divider class="custom-divider-header">
+                <ion-label class="listLabel">
+                  Repeating Surveys
+                </ion-label>
+              </ion-item-divider>
+              <ng-container *ngFor="let survey of (surveys | async)">
+                <ion-item button *ngIf="survey.type == 'Repeating'" [routerLink]="['/survey', survey.id]">
+                  <ion-label>
+                    {{ survey.title }}
+                  </ion-label>
+                </ion-item>
+              </ng-container>
+              <ion-item button [routerLink]="['/survey', 'Repeating']">
+                <ion-icon name="add"></ion-icon>New Survey
+              </ion-item>
+              <ion-item-divider class="custom-divider-header">
+                <ion-label class="listLabel">
+                  Emotion Surveys
+                </ion-label>
+              </ion-item-divider>
+              <ng-container *ngFor="let survey of (surveys | async)">
+                <ion-item button *ngIf="survey.type == 'Emotion Triggered'" [routerLink]="['/survey', survey.id]">
+                  <ion-label>
+                    {{ survey.title }}
+                  </ion-label>
+                </ion-item>
+              </ng-container>
+              <ion-item button [routerLink]="['/survey', 'Emotion Triggered']">
+                <ion-icon name="add"></ion-icon>New Survey
+              </ion-item>
+            </div>
+          </ion-col>
+          <ion-col size=9>
+            <div>
+              <ion-row>
+                <ion-col size="6">
+                  <ion-button (click)="getUserEvents()" expand="block" fill="outline">
+                    View Completed Surveys
+                  </ion-button>
+                </ion-col>
+                <ion-col size="6">
+                  <ion-button (click)="scheduledSurveys()" expand="block" fill="outline">
+                    View Scheduled Surveys
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <!-- Move back one screen of the slides -->
+                <ion-col size="2">
+                  <ion-button fill="clear" (click)="back()">
+                    <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </ion-col>
+
+                <ion-col size="8" class="ion-text-center">
+                  <h2>{{ viewTitle }}</h2>
+                </ion-col>
+
+                <!-- Move forward one screen of the slides -->
+                <ion-col size="2">
+                  <ion-button fill="clear" (click)="next()">
+                    <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+
+              <calendar id="schedule" [eventSource]="eventSource" [calendarMode]="calendar.mode"
+                [currentDate]="calendar.currentDate" [locale]="calendar.locale" [allDayLabel]="calendar.allDayLabel"
+                (onEventSelected)="onEventSelected($event)" (onTitleChanged)="onViewTitleChanged($event)" startHour="6"
+                endHour="20" step="30" startingDayWeek="1">
+              </calendar>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
   </div>
 
-  <div *ngIf="view == 'schedule'">
-    <ion-segment [(ngModel)]="calendar.mode">
-    <ion-segment-button value="month">
-      <ion-label>Month</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="week">
-      <ion-label>Week</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="day">
-      <ion-label>Day</ion-label>
-    </ion-segment-button>
-  </ion-segment>
- 
-  <ion-row>
-    <ion-col size="6">
-      <ion-button (click)="createRandomEvents()" expand="block" fill="outline">
-        Add random events
-      </ion-button>
-    </ion-col>
-    <ion-col size="6">
-      <ion-button (click)="removeEvents()" expand="block" fill="outline">
-        Remove all events
-      </ion-button>
-    </ion-col>
-  </ion-row>
- 
-  <ion-row>
-    <!-- Move back one screen of the slides -->
-    <ion-col size="2">
-      <ion-button fill="clear" (click)="back()">
-        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-col>
- 
-    <ion-col size="8" class="ion-text-center">
-      <h2>{{ viewTitle }}</h2>
-    </ion-col>
- 
-    <!-- Move forward one screen of the slides -->
-    <ion-col size="2">
-      <ion-button fill="clear" (click)="next()">
-        <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-col>
-  </ion-row>
- 
-  <calendar
-    [eventSource]="eventSource"
-    [calendarMode]="calendar.mode"
-    [currentDate]="calendar.currentDate"
-    (onEventSelected)="onEventSelected($event)"
-    (onTitleChanged)="onViewTitleChanged($event)"
-    startHour="6"
-    endHour="20"
-    step="30"
-    startingDayWeek="1"
-  >
-  </calendar>
-  </div>
+
+
 
   <div *ngIf="view == 'monitor'">
     <ion-list>
@@ -144,3 +139,31 @@
     </ion-list>
   </div>
 </ion-content>
+
+<div class="my-overlay" padding [hidden]="eventHidden" *ngIf="!eventHidden">
+  <ion-card id="eventDetails">
+    <ion-card-header class="ion-padding" style="background-color: var(--main-color); color: #f5f6f9">
+      Event
+    </ion-card-header>
+    <ion-card-title class="ion-padding">
+      <ion-row>
+        <h1>User: {{currentEvent.title.split(':')[0]}}</h1>
+      </ion-row>
+      <ion-row>
+        <h1>Survey: {{currentEvent.title.split(':')[1]}}</h1>
+      </ion-row>
+    </ion-card-title>
+    <ion-card-content>
+      <ion-row>
+        <p>Survey: {{currentEvent.title.split(':')[1]}}</p>
+      </ion-row>
+      <ion-row>
+        <p>Date Completed: {{currentEvent.endTime}}</p>
+        <a href={{currentEvent.adminLink}} *ngIf="currentEvent.adminLink != ''">Survey Results</a>
+      </ion-row>
+      <ion-row>
+        <ion-button color="danger" style="width: 100%;" (click)="hideOverlay()">Close</ion-button>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</div>
