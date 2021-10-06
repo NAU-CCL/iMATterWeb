@@ -3,6 +3,7 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 
 import { map, take } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs';
+import { Timestamp } from 'rxjs/internal/operators/timestamp';
 
 // declares Survey object interface, making sure every Survey object has these fields
 export interface Survey {
@@ -15,6 +16,7 @@ export interface Survey {
     points: number;
     importance: string;
     characteristics: any;
+    dateCreated: any;
 }
 
 

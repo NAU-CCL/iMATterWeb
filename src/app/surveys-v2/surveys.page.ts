@@ -5,7 +5,7 @@ import { Component, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { SurveyService, Survey } from '../services/survey/survey.service';
 import { Observable, VirtualTimeScheduler } from 'rxjs';
 import { Storage } from '@ionic/storage';
-import { Router } from '@angular/router';
+import { Router, Routes, RouterModule } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
@@ -27,6 +27,9 @@ export class SurveysPage implements OnInit {
     currentEvent: any;
 
     eventSource = [];
+    userSurveys = [];
+    scheduler: boolean = false;
+    userView: boolean = true;
     viewTitle: string;
 
     calendar = {
@@ -34,7 +37,6 @@ export class SurveysPage implements OnInit {
         currentDate: new Date(),
         step: 30 as Step,
         locale: 'en-GB',
-        allDayLabel: 'Completed Survey'
     };
 
     selectedDate: Date;
@@ -48,6 +50,16 @@ export class SurveysPage implements OnInit {
     public currentUser: any;
 
     public title: string;
+
+    public dayMap = {
+        monday: 1,
+        tuesday: 2,
+        wednesday: 3,
+        thursday: 4,
+        friday: 5,
+        saturday: 6,
+        sunday: 0
+    }
 
     @ViewChild(CalendarComponent, { static: false }) myCal: CalendarComponent;
 
@@ -94,12 +106,14 @@ export class SurveysPage implements OnInit {
             });
         });
 
+
         this.getUserEvents();
 
         gapi.load("client:auth2", function () {
             gapi.auth2.init({ client_id: "626066789753-d0jm6t0ape6tnfvomv2ojuvf73glllk5.apps.googleusercontent.com" });
         });
     }
+
 
     showToast(msg: string) {
         this.toastCtrl.create({
@@ -165,14 +179,20 @@ export class SurveysPage implements OnInit {
         console.log(event);
         this.currentEvent = event;
 
-        // Use Angular date pipe for conversion
-        let start = formatDate(event.startTime, 'medium', this.calendar.locale);
-        let end = formatDate(event.endTime, 'medium', this.calendar.locale);
+        if (!this.currentEvent.allDay) {
+            // Use Angular date pipe for conversion
+            let start = formatDate(event.startTime, 'medium', this.calendar.locale);
+            let end = formatDate(event.endTime, 'medium', this.calendar.locale);
 
-        console.log('Start: ' + start + '\nEnd: ' + end);
+            console.log('Start: ' + start + '\nEnd: ' + end);
 
-        this.eventHidden = false;
+            this.eventHidden = false;
+        } else {
+            console.log(event.id);
+            this.router.navigate(["/survey", event.id]);
+        }
     }
+
 
     getUserEvents() {
         this.eventSource = [];
@@ -182,18 +202,25 @@ export class SurveysPage implements OnInit {
             userArray.forEach(user => {
                 if (user.answeredSurveys !== undefined) {
                     user.answeredSurveys.forEach(survey => {
-                        var endTime = new Date(survey.date + 'T17:00:00');
-                        var startTime = new Date(survey.date + 'T17:00:00');
-                        startTime.setDate(startTime.getDate() - 1);
+                        console.log(survey.timeStart);
+                        var startTime = new Date(survey.date + 'T' + survey.timeStart.split(' ')[0] + ':00');
+
                         this.surveyService.getSurvey(survey.survey).subscribe(event => {
                             this.eventSource.push({
                                 title: user.username + ": " + event.title,
                                 adminLink: event.adminLink,
                                 startTime: startTime,
-                                endTime: endTime,
-                                allDay: true,
+                                endTime: startTime,
+                                allDay: false,
                             });
                             this.myCal.loadEvents();
+                            this.userSurveys.push({
+                                title: user.username + ": " + event.title,
+                                adminLink: event.adminLink,
+                                startTime: startTime,
+                                endTime: startTime,
+                                allDay: false,
+                            });
                         });
                     });
                 }
@@ -203,11 +230,111 @@ export class SurveysPage implements OnInit {
     }
 
     scheduledSurveys() {
-        console.log(this.weeklySurveys);
-        console.log(this.monthlySurveys);
+        if (!this.scheduler) {
+            this.monthlySurveys.forEach(survey => {
+                this.addMonthlySurveys(survey);
+            });
+
+            this.weeklySurveys.forEach(survey => {
+                this.addWeeklySurveys(survey);
+            });
+            this.scheduler = true;
+        } else {
+            this.eventSource.forEach(event => {
+                if (event.allDay) {
+                    this.eventSource.splice(this.eventSource.indexOf(event));
+                    this.myCal.loadEvents();
+                }
+            });
+            this.scheduler = false;
+        }
+    }
+
+    addWeeklySurveys(survey) {
+        var today = new Date();
+        var years = [today.getFullYear(), today.getFullYear() + 1];
+        var created = new Date(survey.dateCreated.seconds * 1000);
+        var day = this.dayMap[survey.characteristics['display']];
+        var weekdays = this.getWeekdays(created, day);
+        weekdays.forEach(day => {
+            if (day.getDate() > created.getDay) {
+                this.eventSource.push({
+                    title: survey.title,
+                    startTime: day,
+                    endTime: day,
+                    allDay: true,
+                    id: survey.id
+                });
+                this.myCal.loadEvents();
+            }
+        });
+        for (var i = created.getMonth(); i <= 11; i++) {
+            years.forEach(year => {
+                var date = new Date();
+                date.setMonth(i);
+                date.setFullYear(year);
+                this.getWeekdays(date, day).forEach(event => {
+                    console.log(event);
+                    this.eventSource.push({
+                        title: survey.title,
+                        startTime: event,
+                        endTime: event,
+                        allDay: true,
+                        id: survey.id
+                    });
+                    this.myCal.loadEvents();
+                });
+            });
+        }
+    }
+
+    addMonthlySurveys(survey) {
+        var today = new Date();
+        var years = [today.getFullYear(), today.getFullYear() + 1];
+        var created = new Date(survey.dateCreated.seconds * 1000);
+        var monthCreated = created.getMonth();
+        if (created.getDate() > survey.characteristics['display']) {
+            monthCreated++;
+        }
+        for (var i = monthCreated + 1; i <= 12; i++) {
+            years.forEach(year => {
+                let parsedDate = moment(year + '-' + i + '-' + survey.characteristics['display'], "YYYY-M-D");
+                var startDate = parsedDate.toDate();
+                var endDate = parsedDate.toDate();
+                this.eventSource.push({
+                    title: survey.title,
+                    startTime: startDate,
+                    endTime: endDate,
+                    allDay: true,
+                    id: survey.id
+                });
+                this.myCal.loadEvents();
+            });
+        }
     }
 
     hideOverlay() {
         this.eventHidden = true;
+    }
+
+    getWeekdays(date, day) {
+        var d = date || new Date(),
+            month = d.getMonth(),
+            mondays = [];
+
+        d.setDate(day);
+
+        // Get the first Monday in the month
+        while (d.getDay() !== day) {
+            d.setDate(d.getDate() + 1);
+        }
+
+        // Get all the other Mondays in the month
+        while (d.getMonth() === month) {
+            mondays.push(new Date(d.getTime()));
+            d.setDate(d.getDate() + 7);
+        }
+
+        return mondays;
     }
 }

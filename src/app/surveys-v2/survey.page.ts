@@ -9,6 +9,7 @@ import { ToastController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { TaskScheduler } from '@angular-devkit/schematics';
 import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
+import { Timestamp } from 'rxjs/internal/operators/timestamp';
 
 declare var gapi: any;
 
@@ -31,7 +32,8 @@ export class SurveyPage implements OnInit {
         adminLink: '',
         points: 0,
         importance: '',
-        characteristics: {}
+        characteristics: {},
+        dateCreated: new Date().getTime()
     };
 
     constructor(

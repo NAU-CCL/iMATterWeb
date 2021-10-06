@@ -81,14 +81,9 @@
           <ion-col size=9>
             <div>
               <ion-row>
-                <ion-col size="6">
-                  <ion-button (click)="getUserEvents()" expand="block" fill="outline">
-                    View Completed Surveys
-                  </ion-button>
-                </ion-col>
-                <ion-col size="6">
-                  <ion-button (click)="scheduledSurveys()" expand="block" fill="outline">
-                    View Scheduled Surveys
+                <ion-col size="6" offset=3>
+                  <ion-button (click)="scheduledSurveys()" expand="block" [fill]="scheduler ? 'solid' : 'outline'">
+                    Toggle Scheduled Surveys
                   </ion-button>
                 </ion-col>
               </ion-row>
@@ -114,7 +109,7 @@
               </ion-row>
 
               <calendar id="schedule" [eventSource]="eventSource" [calendarMode]="calendar.mode"
-                [currentDate]="calendar.currentDate" [locale]="calendar.locale" [allDayLabel]="calendar.allDayLabel"
+                [currentDate]="calendar.currentDate" [locale]="calendar.locale"
                 (onEventSelected)="onEventSelected($event)" (onTitleChanged)="onViewTitleChanged($event)" startHour="6"
                 endHour="20" step="30" startingDayWeek="1">
               </calendar>
@@ -129,6 +124,7 @@
 
 
   <div *ngIf="view == 'monitor'">
+    <h1>THIS SECTION IS UNDER CONSTRUCTION</h1>
     <ion-list>
       <ion-item>
         <div>User <b>T-Honey</b> has not completed <b>Daily Survey</b> for <b>7 days</b>.</div>
