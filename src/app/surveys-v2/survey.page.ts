@@ -33,7 +33,7 @@ export class SurveyPage implements OnInit {
         points: 0,
         importance: '',
         characteristics: {},
-        dateCreated: new Date().getTime()
+        dateCreated: ''
     };
 
     constructor(
@@ -81,6 +81,7 @@ export class SurveyPage implements OnInit {
             this.surveyService.updateSurvey(this.survey);
             this.showToast("Survey successfully updated!")
         } else {
+            this.survey.dateCreated = new Date().getTime;
             this.surveyService.addSurvey(this.survey);
             this.router.navigate(['surveys-v2']);
         }

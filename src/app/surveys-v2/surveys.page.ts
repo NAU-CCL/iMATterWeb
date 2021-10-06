@@ -5,7 +5,7 @@ import { Component, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { SurveyService, Survey } from '../services/survey/survey.service';
 import { Observable, VirtualTimeScheduler } from 'rxjs';
 import { Storage } from '@ionic/storage';
-import { Router, Routes, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
@@ -70,8 +70,7 @@ export class SurveysPage implements OnInit {
         private toastCtrl: ToastController,
         private http: HttpClient,
         private alertCtrl: AlertController,
-        private userService: UserService,
-        @Inject(LOCALE_ID) private locale: string,) {
+        private userService: UserService) {
     }
 
     ngOnInit() {

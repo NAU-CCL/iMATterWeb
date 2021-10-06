@@ -7,7 +7,6 @@ import { elementAt } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Survey, SurveyService } from '../services/survey/survey.service';
 import { CreateUserService, User } from '../services/createUsers/create-user.service';
-import { EmailComposer } from '@ionic-native/email-composer'
 
 @Component({
   selector: 'app-gift-card-requests',
@@ -36,8 +35,7 @@ export class GiftCardRequestsPage implements OnInit {
     public gcService: GiftCardRequestsService,
     public afs: AngularFirestore,
     public surveyService: SurveyService,
-    public userService: CreateUserService,
-    private emailComposer: EmailComposer) {
+    public userService: CreateUserService) {
   }
 
   ngOnInit() {

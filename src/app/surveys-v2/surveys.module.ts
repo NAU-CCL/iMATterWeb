@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { SurveysPageRoutingModule } from './surveys-routing.module';
 
 import { SurveysPage } from './surveys.page';
-import { RouterModule } from '@angular/router';
 import { NgCalendarModule } from 'ionic2-calendar';
 
 import { registerLocaleData } from '@angular/common';
