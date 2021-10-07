@@ -75,6 +75,14 @@
         <ion-col size="6">
           <ion-item>
             <ion-label position="stacked">
+              Day to Display (After Joining)
+            </ion-label>
+            <ion-input type="number" name="daysAfterJoining" [(ngModel)]="survey.characteristics['daysAfterJoining']"
+              value="{{survey.characteristics['daysAfterJoining']}}">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">
               Days Until Expire
             </ion-label>
             <ion-input type="number" name="expire" [(ngModel)]="survey.characteristics['daysToExpire']"

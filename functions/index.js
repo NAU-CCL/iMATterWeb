@@ -108,6 +108,7 @@ exports.sendGCRequestEmail = functions.firestore.document('usersPointsRedeem/{do
  * Days a user, totalDaysPregnant, daysPregnant, daysSinceLogin, and weeksPregnant
  */
 exports.updateDays = functions.https.onRequest((req, res) => {
+
     const ref = admin.firestore().collection('users');
     ref.get().then((result) => {
         result.forEach(doc => {
@@ -155,45 +156,91 @@ exports.updateDays = functions.https.onRequest((req, res) => {
                 joinedChallenges: updateJoinedChallenges
             });
 
-            //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
-            var number = Math.random();
-            res.send("days have been updated" + number);
-
-            return null;
-        }).catch(err => {
-
-            res.send("failed: " + err)
+            // currentUser.update({
+            // 	totalDaysRecovery: recoveryDays
+            // });
+            //
+            // currentUser.update({
+            // 	daysRecovery: recoveryDays % 7
+            // });
+            //
+            // currentUser.update({
+            // 	totalDaysRecovery: Math.floor(recoveryDays / 7)
+            // });
+            // Calculate pregnancy days stuff
+            // var dueDate = doc.data().dueDate;
+            // const currentDateString = new Date().toJSON().split('T')[0];
+            // const currentDate = new Date(currentDateString);
+            // const userDueDate = new Date(dueDate);
+            //
+            // const dateDiff = Math.abs(currentDate.getTime() - userDueDate.getTime());
+            // const diffInDays = Math.ceil(dateDiff / (24 * 3600 * 1000));
+            //
+            // var totalDays;
+            //
+            // //if user is still within 280 days of pregnancy
+            // if (userDueDate >= currentDate)
+            // {
+            // 	totalDays = 280 - diffInDays - 1;
+            // }
+            // else if (userDueDate < currentDate) //past due date
+            // {
+            // 	//start adding onto 280
+            // 	totalDays = 280 + diffInDays;
+            // }
+            //
+            // const weeksPregnant = Math.floor(totalDays / 7);
+            // const daysPregnant = totalDays % 7;
+            //
+            // currentUser.update({
+            // 	totalDaysPregnant: totalDays
+            // });
+            //
+            // currentUser.update({
+            // 	daysPregnant: daysPregnant
+            // });
+            //
+            // currentUser.update({
+            // 	weeksPregnant: weeksPregnant
+            // });
         });
 
-        // get random quote of the day
-        const quotes = [];
-        let homeQuote = '';
-        const imgs = admin.firestore().collection('quotes');
-        imgs.get().then(result => {
-            result.forEach(doc => {
-                quotes.push(doc.get('picture'));
-            });
-            const randIndex = Math.floor(Math.random() * Math.floor(quotes.length));
-            homeQuote = quotes[randIndex];
-            return null;
-        }).catch(err => {
-            console.log("Failed: " + err);
-        });
+        //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
+        var number = Math.random();
+        res.send("days have been updated" + number);
 
-        const home = admin.firestore().collection('homeQuote');
-        home.get().then(result => {
-            result.forEach(doc => {
-                result.quote = homeQuote;
-            });
-            return null;
-        }).catch(err => {
-            console.log('Failed: ' + err);
-        });
+        return null;
+    }).catch(err => {
 
-
-
+        res.send("failed: " + err)
     });
-});
+
+    // get random quote of the day
+    const quotes = [];
+    let homeQuote = '';
+    const imgs = admin.firestore().collection('quotes');
+    imgs.get().then(result => {
+        result.forEach(doc => {
+            quotes.push(doc.get('picture'));
+        });
+        const randIndex = Math.floor(Math.random() * Math.floor(quotes.length));
+        homeQuote = quotes[randIndex];
+        return null;
+    }).catch(err => {
+        console.log("Failed: " + err);
+    });
+
+    const home = admin.firestore().collection('homeQuote');
+    home.get().then(result => {
+        result.forEach(doc => {
+            result.quote = homeQuote;
+        });
+        return null;
+    }).catch(err => {
+        console.log('Failed: ' + err);
+    });
+
+});;
 
 exports.sendInfoDeskNotification =
     functions.firestore.document('questions/{questionID}').onCreate(async (snap, context) => {
