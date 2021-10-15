@@ -44,19 +44,6 @@
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col size="5">
-                    <ion-item>
-                        <ion-label position="stacked"> Challenge Icon</ion-label>
-                        <input id="iconInput" type="file" name="icon" (change)="uploadIcon()">
-                    </ion-item>
-                </ion-col>
-                <ion-col>
-                    <ion-thumbnail>
-                        <ion-img *ngIf="challenge.id" src="{{challenge.icon}}"></ion-img>
-                    </ion-thumbnail>
-                </ion-col>
-            </ion-row>
-            <ion-row>
                 <ion-col size="6">
                     <div style="font-size: 0.8em; color: #4B5257">
                         The challenge icon will be displayed as a small 16px by 16px thumbnail image. Keep this in mind
@@ -71,7 +58,8 @@
                         </ion-label>
                         <ion-select name="type" [(ngModel)]="challenge.type" value="{{challenge.type}}">
                             <ng-container *ngFor="let type of (challengeTypes|async)">
-                                <ion-select-option *ngIf="type.active" value="{{type.type}}">{{type.type}}</ion-select-option>
+                                <ion-select-option *ngIf="type.active" value="{{type.type}}">{{type.type}}
+                                </ion-select-option>
                             </ng-container>
                         </ion-select>
                     </ion-item>
@@ -82,7 +70,8 @@
                     <ion-item>
                         <ion-label position="stacked"> Length of Challenges (days)
                         </ion-label>
-                        <ion-input name="length" id="length" type="number" max="30" min="1" [(ngModel)]="challenge.length"></ion-input>
+                        <ion-input name="length" id="length" type="number" max="30" min="1"
+                            [(ngModel)]="challenge.length"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col size="3">
@@ -104,19 +93,24 @@
                             <ion-label position="stacked">Task {{i + 1}}</ion-label>
                             <ion-item>
                                 <ion-label position="stacked">Title</ion-label>
-                                <ion-input type="text" name="taskTitle{{i}}" [(ngModel)]="challenge.contents[i].title"></ion-input>
+                                <ion-input type="text" name="taskTitle{{i}}" [(ngModel)]="challenge.contents[i].title">
+                                </ion-input>
                             </ion-item>
                             <ion-item>
                                 <ion-label position="stacked">Activity</ion-label>
-                                <ion-textarea type="text" name="taskActivity{{i}}" [(ngModel)]="challenge.contents[i].activity"></ion-textarea>
+                                <ion-textarea type="text" name="taskActivity{{i}}"
+                                    [(ngModel)]="challenge.contents[i].activity"></ion-textarea>
                             </ion-item>
                             <ion-item>
                                 <ion-label position="stacked">Benefits (separate each item with a semicolon)</ion-label>
-                                <ion-textarea type="text" name="taskTips{{i}}" [(ngModel)]="challenge.contents[i].benefits"></ion-textarea>
+                                <ion-textarea type="text" name="taskTips{{i}}"
+                                    [(ngModel)]="challenge.contents[i].benefits"></ion-textarea>
                             </ion-item>
                             <ion-item>
-                                <ion-label position="stacked">Tips and resources (separate each item with semicolon)</ion-label>
-                                <ion-textarea type="text" name="taskResources{{i}}" [(ngModel)]="challenge.contents[i].tips"></ion-textarea>
+                                <ion-label position="stacked">Tips and resources (separate each item with semicolon)
+                                </ion-label>
+                                <ion-textarea type="text" name="taskResources{{i}}"
+                                    [(ngModel)]="challenge.contents[i].tips"></ion-textarea>
                             </ion-item>
                         </ng-container>
                     </ion-list>
@@ -147,12 +141,10 @@
     </form>
     <ion-footer>
         <ion-toolbar>
-<!--            <ion-button class="fill-button" expand="full" (click)="uploadImage(uploadedImage, challengesForm)">-->
-<!--                Submit-->
-<!--            </ion-button>-->
+            <!--            <ion-button class="fill-button" expand="full" (click)="uploadImage(uploadedImage, challengesForm)">-->
+            <!--                Submit-->
+            <!--            </ion-button>-->
 
         </ion-toolbar>
     </ion-footer>
 </ion-content>
-
-

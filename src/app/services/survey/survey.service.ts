@@ -74,7 +74,8 @@ export class SurveyService {
             description: survey.description,
             points: Number(survey.points),
             importance: survey.importance,
-            characteristics: survey.characteristics
+            characteristics: survey.characteristics,
+            dateCreated: survey.dateCreated
         });
     }
 

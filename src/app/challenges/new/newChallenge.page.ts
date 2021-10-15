@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {ChallengeService, Challenge, ChallengeType} from '../../services/challenges/challenges.service';
-import {AngularFirestore} from '@angular/fire/firestore';
-import {FireBaseService} from '../../services/fireBaseService.service';
-import {AngularFireStorage} from '@angular/fire/storage';
-import {Observable} from 'rxjs';
-import {Storage} from '@ionic/storage';
-import {Router} from '@angular/router';
-import {ToastController} from '@ionic/angular';
-import {FormBuilder, FormGroup, Validators, FormControl, FormArray} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
-import {AlertController} from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { ChallengeService, Challenge, ChallengeType } from '../../services/challenges/challenges.service';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { FireBaseService } from '../../services/fireBaseService.service';
+import { AngularFireStorage } from '@angular/fire/storage';
+import { Observable } from 'rxjs';
+import { Storage } from '@ionic/storage';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
     selector: 'editChallenge',
@@ -33,19 +33,18 @@ export class NewChallengePage implements OnInit {
         type: '',
         length: 0,
         coverPicture: '',
-        icon: '',
         contents: []
     };
 
     constructor(private fs: ChallengeService,
-                private fireStorage: AngularFireStorage,
-                private storage: Storage,
-                private router: Router,
-                private toastCtrl: ToastController,
-                private formBuilder: FormBuilder,
-                private afs: AngularFirestore,
-                private activatedRoute: ActivatedRoute,
-                private alertController: AlertController) {
+        private fireStorage: AngularFireStorage,
+        private storage: Storage,
+        private router: Router,
+        private toastCtrl: ToastController,
+        private formBuilder: FormBuilder,
+        private afs: AngularFirestore,
+        private activatedRoute: ActivatedRoute,
+        private alertController: AlertController) {
     }
 
     ngOnInit() {
@@ -91,6 +90,7 @@ export class NewChallengePage implements OnInit {
             const file = (document.getElementById('pictureInput') as HTMLInputElement).files[0];
             if (file === undefined) {
                 this.challenge.contents.forEach(task => {
+                    console.log(task);
                     task.benefits = task.benefits.split(';');
                     task.tips = task.tips.split(';');
                 });
@@ -178,25 +178,25 @@ export class NewChallengePage implements OnInit {
         }
     }
 
-    uploadIcon() {
-        console.log('picture detected');
-        const file = (document.getElementById('iconInput') as HTMLInputElement).files[0];
-        this.fileName = file.name;
-        // The storage path
-        const path = `ChallengeImages/${new Date().getTime()}_${file.name}`;
-        // this.ch.fileName = `${new Date().getTime()}_${file.name}`;
-        // File reference
-        const fileRef = this.fireStorage.ref(path);
-        // The main task
-        this.task = this.fireStorage.upload(path, file).then(() => {
-            // Get uploaded file storage path
-            this.uploadedFileURL = fileRef.getDownloadURL();
+    // uploadIcon() {
+    //     console.log('picture detected');
+    //     const file = (document.getElementById('iconInput') as HTMLInputElement).files[0];
+    //     this.fileName = file.name;
+    //     // The storage path
+    //     const path = `ChallengeImages/${new Date().getTime()}_${file.name}`;
+    //     // this.ch.fileName = `${new Date().getTime()}_${file.name}`;
+    //     // File reference
+    //     const fileRef = this.fireStorage.ref(path);
+    //     // The main task
+    //     this.task = this.fireStorage.upload(path, file).then(() => {
+    //         // Get uploaded file storage path
+    //         this.uploadedFileURL = fileRef.getDownloadURL();
 
-            this.uploadedFileURL.subscribe(resp => {
-               this.challenge.icon = resp;
-            });
-        });
-    }
+    //         this.uploadedFileURL.subscribe(resp => {
+    //             this.challenge.icon = resp;
+    //         });
+    //     });
+    // }
 
 
     async addChallenge(challengesForm: FormGroup) {
@@ -223,7 +223,7 @@ export class NewChallengePage implements OnInit {
         this.challenge.contents = [];
         for (let i = 1; i <= length; i++) {
             this.challengeContent.push('day' + i);
-            this.challenge.contents.push({title: '', activity: '', benefits: '', tips: ''});
+            this.challenge.contents.push({ title: '', activity: '', benefits: '', tips: '' });
         }
         console.log(this.challengeContent);
         console.log(this.challenge.contents);
@@ -235,7 +235,7 @@ export class NewChallengePage implements OnInit {
             header: 'Delete Survey?',
             message: 'Are you sure you want to delete this survey?',
             buttons: [
-                {text: 'Cancel'},
+                { text: 'Cancel' },
                 {
                     text: 'Delete',
                     handler: () => {

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore';
-import {AngularFireStorage} from '@angular/fire/storage';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { map, take } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs';
-import {File} from '@ionic-native/file/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 // declares Survey object interface, making sure every Survey object has these fields
 export interface Challenge {
@@ -14,7 +14,6 @@ export interface Challenge {
     type: string;
     length: number;
     coverPicture: any;
-    icon: any;
     contents: any[];
 }
 
@@ -57,7 +56,7 @@ export class ChallengeService {
                 return actions.map(a => {
                     const data = a.payload.doc.data();
                     const id = a.payload.doc.id;
-                    return { id, ...data};
+                    return { id, ...data };
                 });
             })
         );
@@ -108,10 +107,10 @@ export class ChallengeService {
             title: challenge.title,
             description: challenge.description,
             coverPicture: challenge.coverPicture,
-            icon: challenge.icon,
             type: challenge.type,
             length: challenge.length as number,
-            contents: challenge.contents});
+            contents: challenge.contents
+        });
     }
 
     deactivateChallengeTypes(id: string): Promise<void> {
@@ -135,7 +134,7 @@ export class ChallengeService {
             .toString(36)
             .substring(2, 8);
 
-        const oMyBlob = new Blob([file], {type});
+        const oMyBlob = new Blob([file], { type });
 
         const uploadTask = this.afs.upload(
             `files/${new Date().getTime()}_${randomId}_${name}`,
@@ -144,7 +143,7 @@ export class ChallengeService {
 
         uploadTask.then(async res => {
             console.log('file upload finished!');
-        }).catch(err =>  {
+        }).catch(err => {
             console.log('file wasnt upload. Error: ' + err);
         });
     }

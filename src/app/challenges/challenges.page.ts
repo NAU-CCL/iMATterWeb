@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {ChallengeService, Challenge} from '../services/challenges/challenges.service';
-import {Observable} from 'rxjs';
-import {Storage} from '@ionic/storage';
-import {Router} from '@angular/router';
-import {ToastController} from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { ChallengeService, Challenge } from '../services/challenges/challenges.service';
+import { Observable } from 'rxjs';
+import { Storage } from '@ionic/storage';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 
 
 @Component({
@@ -20,14 +20,13 @@ export class ChallengesPage implements OnInit {
         type: '',
         length: 0,
         coverPicture: '',
-        icon: '',
         contents: []
     };
 
     constructor(private fs: ChallengeService,
-                private storage: Storage,
-                private router: Router,
-                private toastCtrl: ToastController) {
+        private storage: Storage,
+        private router: Router,
+        private toastCtrl: ToastController) {
     }
 
     ngOnInit() {

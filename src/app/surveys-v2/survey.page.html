@@ -157,7 +157,7 @@
     <ion-row *ngIf="survey.id">
       <!-- Deletes Survey -->
       <ion-col size="6">
-        <ion-button expand="block" fill="outline" color="danger" (click)="showToast('delete')">
+        <ion-button expand="block" fill="outline" color="danger" (click)="delete(survey.id)">
           <ion-icon name="trash" slot="start"></ion-icon>
           Delete
         </ion-button>

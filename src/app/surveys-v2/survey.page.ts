@@ -9,7 +9,7 @@ import { ToastController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { TaskScheduler } from '@angular-devkit/schematics';
 import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
-import { Timestamp } from 'rxjs/internal/operators/timestamp';
+import { timestamp, Timestamp } from 'rxjs/internal/operators/timestamp';
 
 declare var gapi: any;
 
@@ -76,12 +76,16 @@ export class SurveyPage implements OnInit {
     }
 
     logForm() {
-        console.log(this.survey);
+
         if (this.survey.id) {
+            console.log(this.survey);
+            return;
             this.surveyService.updateSurvey(this.survey);
             this.showToast("Survey successfully updated!")
         } else {
-            this.survey.dateCreated = new Date().getTime;
+            var now = new Date();
+            this.survey.dateCreated = now;
+            console.log(this.survey);
             this.surveyService.addSurvey(this.survey);
             this.router.navigate(['surveys-v2']);
         }
@@ -94,9 +98,13 @@ export class SurveyPage implements OnInit {
     }
 
     delete(id) {
-        this.surveyService.deleteSurvey(id);
-        this.router.navigate(['/surveys-v2/']);
-        this.showToast("Survey successfully deleted.")
+        // if the administrator confirms, the survey will be deleted using the fs service
+        this.surveyService.deleteSurvey(this.survey.id).then(() => {
+            this.router.navigateByUrl('/surveys-v2');
+            this.showToast('Survey deleted');
+        }, err => {
+            this.showToast('There was a problem deleting your survey');
+        });
     }
 
     showToast(msg: string) {
