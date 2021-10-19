@@ -79,7 +79,6 @@ export class SurveyPage implements OnInit {
 
         if (this.survey.id) {
             console.log(this.survey);
-            return;
             this.surveyService.updateSurvey(this.survey);
             this.showToast("Survey successfully updated!")
         } else {

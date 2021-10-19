@@ -142,7 +142,7 @@ export class NewChallengePage implements OnInit {
                     task.benefits = task.benefits.split(';');
                     task.tips = task.tips.split(';');
                 });
-                this.challenge.coverPicture = '';
+                this.challenge.coverPicture = 'https://firebasestorage.googleapis.com/v0/b/imatter-nau.appspot.com/o/ChallengeImages%2FdefaultChallenge_640x640.png?alt=media&token=f80549df-a0bc-42f2-b487-555fd059f719';
                 this.challenge.length = this.challenge.length as number;
                 this.fs.addChallenge(this.challenge).then(() => {
                     this.router.navigateByUrl('/challenges');
