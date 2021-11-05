@@ -24,6 +24,9 @@ export class SurveyPage implements OnInit {
 
     public surveyTypes = ['Days After Joining', 'Repeating', 'Emotion Triggered'];
 
+    public userRemindersChecked = false;
+    public adminRemindersChecked = false;
+
     survey: Survey = {
         type: '',
         description: '',

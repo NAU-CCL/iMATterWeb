@@ -42,35 +42,13 @@
       <ion-row>
         <ion-col size="6">
           <ion-item>
-            <ion-label position="stacked"> Admin Survey Link
-            </ion-label>
-            <ion-textarea name="link" [(ngModel)]="survey.adminLink"></ion-textarea>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="6">
-          <ion-item>
             <ion-label position="stacked"> Survey Points
             </ion-label>
             <ion-input type='number' name="points" [(ngModel)]="survey.points"></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
-      <ion-row>
-        <ion-col size="6">
-          <ion-item>
-            <ion-label position="stacked">Importance
-            </ion-label>
-            <ion-select name="importance" [(ngModel)]="survey.importance" value="{{survey.importance}}">
-              <!-- <ng-container *ngFor="let type of (challengeTypes|async)"> -->
-              <ion-select-option value="low">Low</ion-select-option>
-              <ion-select-option value="high">High</ion-select-option>
-              <!-- </ng-container> -->
-            </ion-select>
-          </ion-item>
-        </ion-col>
-      </ion-row>
+
       <ion-row *ngIf="survey.characteristics != null && survey.type != 'Repeating'">
         <ion-col size="6">
           <ion-item>
@@ -141,12 +119,60 @@
           </ion-item>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="survey.characteristics != null && survey.type == 'Repeating'">
-        <ion-col size="6">
+      <ion-row>
+        <ion-label class="ion-padding">Notification Settings</ion-label>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3">
+          <ion-row>
+            <ion-label class="ion-padding">Admin Notifications</ion-label>
+          </ion-row>
           <ion-item>
-            <ion-label position="stacked">Stack Surveys</ion-label>
-            <ion-checkbox name='stacked' [(ngModel)]="survey.characteristics['stack']"></ion-checkbox>
+            <ion-label>Notify me days after so many days missed</ion-label>
+            <ion-checkbox slot="end" (ionChange)="adminRemindersChecked = !adminRemindersChecked"></ion-checkbox>
           </ion-item>
+          <ion-row *ngIf="adminRemindersChecked">
+            <ion-col offset=1>
+              <ion-item>
+                <ion-label class="ion-text-wrap" position="stacked">After how many days of inactivity would you like to
+                  be notified?
+                </ion-label>
+                <ion-input type="number"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-item>
+            <ion-label>Notify me days after survey expires</ion-label>
+            <ion-checkbox slot="end"></ion-checkbox>
+            <!-- <ion-select name="importance" [(ngModel)]="survey.importance" value="{{survey.importance}}">
+              <ion-select-option value="low">Low</ion-select-option>
+              <ion-select-option value="high">High</ion-select-option>
+            </ion-select> -->
+          </ion-item>
+        </ion-col>
+        <ion-col size="3">
+          <ion-row>
+            <ion-label class="ion-padding">User Reminders</ion-label>
+          </ion-row>
+          <ion-item>
+            <ion-label>Send notification reminders before expiration
+            </ion-label>
+            <ion-checkbox slot="end" (ionChange)="userRemindersChecked = !userRemindersChecked"></ion-checkbox>
+            <!-- <ion-select name="importance" [(ngModel)]="survey.importance" value="{{survey.importance}}">
+              <ion-selec`t-option value="low">Low</ion-select-option>
+              <ion-select-option value="high">High</ion-select-option>
+            </ion-select> -->
+          </ion-item>
+          <ion-row *ngIf="userRemindersChecked">
+            <ion-col offset=1>
+              <ion-item>
+                <ion-label class="ion-text-wrap" position="stacked">How many days before expiration would you like to
+                  notify the user?
+                </ion-label>
+                <ion-input type="number"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
         </ion-col>
       </ion-row>
     </ion-grid>
