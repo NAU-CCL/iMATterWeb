@@ -156,53 +156,6 @@ exports.updateDays = functions.https.onRequest((req, res) => {
                 joinedChallenges: updateJoinedChallenges
             });
 
-            // currentUser.update({
-            // 	totalDaysRecovery: recoveryDays
-            // });
-            //
-            // currentUser.update({
-            // 	daysRecovery: recoveryDays % 7
-            // });
-            //
-            // currentUser.update({
-            // 	totalDaysRecovery: Math.floor(recoveryDays / 7)
-            // });
-            // Calculate pregnancy days stuff
-            // var dueDate = doc.data().dueDate;
-            // const currentDateString = new Date().toJSON().split('T')[0];
-            // const currentDate = new Date(currentDateString);
-            // const userDueDate = new Date(dueDate);
-            //
-            // const dateDiff = Math.abs(currentDate.getTime() - userDueDate.getTime());
-            // const diffInDays = Math.ceil(dateDiff / (24 * 3600 * 1000));
-            //
-            // var totalDays;
-            //
-            // //if user is still within 280 days of pregnancy
-            // if (userDueDate >= currentDate)
-            // {
-            // 	totalDays = 280 - diffInDays - 1;
-            // }
-            // else if (userDueDate < currentDate) //past due date
-            // {
-            // 	//start adding onto 280
-            // 	totalDays = 280 + diffInDays;
-            // }
-            //
-            // const weeksPregnant = Math.floor(totalDays / 7);
-            // const daysPregnant = totalDays % 7;
-            //
-            // currentUser.update({
-            // 	totalDaysPregnant: totalDays
-            // });
-            //
-            // currentUser.update({
-            // 	daysPregnant: daysPregnant
-            // });
-            //
-            // currentUser.update({
-            // 	weeksPregnant: weeksPregnant
-            // });
         });
 
         //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
@@ -326,47 +279,6 @@ exports.sendChatNotifications =
     });
 
 
-/*
-exports.sendChatNotification =
-    functions.firestore.document('chats/{chatID}').onCreate(async (snap, context) => {
-        const newChat = snap.data();
-        const payload = {
-            notification: {
-                title: 'iMATter Chat Room',
-                body: 'There is a new message in the chat room',
-                sound: "default"
-            },
-        };
-
-        if(newChat.type === 'auto') {
-            return;
-        }
-
-    //	if(newChat.type !== 'auto'){
-            const ref = admin.firestore().collection('users').where('cohort', '==', newChat.cohort);
-            ref.get().then((result) => {
-                console.log('before iter', err);
-            //	if(newChat.type !== 'auto'){
-                result.forEach(doc => {
-                    if(doc.get('chatNotif') === true && newChat.userID !== doc.get('code')) {
-                        token = doc.get('token');
-
-                        admin.messaging().sendToDevice(token, payload)
-                            .then((response) => {
-                                console.log('sent notification');
-                                return payload;
-                            }).catch((err) => {
-                            console.log('entered doc, but did not send', err);
-                        });
-                    }
-                });
-            //	}
-                return 'true';
-            }).catch(error => {console.log('did not send', error)});
-        //}
-        return 'true';
-    });
-*/
 //works for BOTH administrators and provideres
 exports.sendProviderRecoveryEmail = functions.firestore.document('provider_recovery_email/{docID}').onCreate((snap, context) => {
     const data = snap.data();
@@ -392,77 +304,17 @@ exports.sendProviderRecoveryEmail = functions.firestore.document('provider_recov
     }).then(res => console.log('successfully sent that mail')).catch(err => console.log(err));
 });
 
-//exports.sendChatNotfication =
-/*
-functions.firestore.document('chats/{chatID}').onCreate(async (snap, context) => {
-        const newChat = snap.data();
-        const payload = {
-            notification: {
-                title: 'iMATter Chat Room',
-                body: 'There is a new message in the chat room',
-                sound: "default"
-            },
-        };
-        var recentNotifications = [];
-
-        const ref = admin.firestore().collection('users').where('cohort', '==', newChat.cohort);
-        ref.get().then((result) => {
-            result.forEach(doc => {
-                if(doc.get('chatNotif') === true && newChat.userID !== doc.get('code')) {
-                    token = doc.get('token');
-                    admin.messaging().sendToDevice(token, payload)
-                        .then((response) => {
-                            console.log('sent notification');
-                            return payload;
-                        }).catch((err) => {
-                            console.log('entered doc, but did not send', err);
-                        });
-                    }
-            });
-            return token;
-        }).catch(error => {console.log('did not send', error)});
-
-    });*/
-
-/* OLD
-exports.deleteOldChatMessages=functions.https.onRequest((req, res)=> {
-const now = new Date();
-console.log('now', now);
-
-admin.firestore().collection('mobileSettings').doc('chatHours').get().then(function(doc) {
-let setHours = Number(doc.get('hours'));
-console.log('setHours', setHours);
-setHours = setHours * 60 * 60 * 1000;
-console.log('setHours', setHours);
-
-const ref = admin.firestore().collection('chats');
-ref.get().then((result) => {
-    let batch = admin.firestore().batch();
-    result.forEach(doc => {
-        const timestamp = new Date(doc.get('timestamp').toDate());
-        console.log('timestamp', timestamp);
-        const difference = now.getTime() - timestamp.getTime();
-        console.log('difference', difference);
-        console.log('setHours', setHours);
-
-        if(difference >= setHours) {
-            batch.delete(doc.ref);
-        }
-
-    });
-    batch.commit();
-    return setHours;
-}).catch(error => {console.log('did not check', error)});
-return setHours;
-}).catch(error => {console.log('failed', error)});
-});*/
-
 exports.deleteOldChatMessages = functions.https.onRequest((req, res) => {
+    const today = new Date();
     const ref = admin.firestore().collection('chats');
     ref.get().then((result) => {
         let batch = admin.firestore().batch();
         result.forEach(doc => {
             if (doc.get('visibility') === false) {
+                batch.delete(doc.ref);
+            }
+            const dateSent = toDate(doc.get('timestamp'));
+            if (today > dateSent.addDays(0.5)) {
                 batch.delete(doc.ref);
             }
         });
