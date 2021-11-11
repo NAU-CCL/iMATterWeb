@@ -3,6 +3,9 @@ const admin = require('firebase-admin');
 
 var newChat;
 const nodemailer = require('nodemailer');
+const {
+    ResultStorage
+} = require('firebase-functions/lib/providers/testLab');
 admin.initializeApp(functions.config().firebase);
 
 
@@ -13,6 +16,32 @@ const {
     SENDER_EMAIL,
     SENDER_PASS
 } = process.env;
+
+exports.updateQuote = functions.https.onRequest((req, res) => {
+    const quotes = ['empty'];
+    let homeQuote = 'empty';
+    const imgs = admin.firestore().collection('quotes');
+    imgs.get().then(result => {
+        result.forEach(doc => {
+            quotes.push(doc.get('picture'));
+        });
+        const randIndex = Math.floor(Math.random() * Math.floor(quotes.length));
+        return homeQuote = quotes[randIndex];
+    }).then(result => {
+        const ref = admin.firestore().collection('homeQuote');
+        ref.get().then((list) => {
+            list.forEach(doc => {
+                const docID = doc.get('id');
+                var current = admin.firestore().collection('homeQuote').doc(docID);
+                current.update({
+                    quote: result
+                });
+                res.status(200).send("New Pic: " + result);
+            });
+        });
+    });
+
+});
 
 exports.sendEmailNotification = functions.https.onRequest((req, res) => {
     let authData = nodemailer.createTransport({
@@ -156,6 +185,10 @@ exports.updateDays = functions.https.onRequest((req, res) => {
                 joinedChallenges: updateJoinedChallenges
             });
 
+            currentUser.update({
+                dailyQuote: getRandomQuote()
+            });
+
         });
 
         //if the res.send is the same each time, for some reason it stops working? Added random number so its different each send.
@@ -168,32 +201,7 @@ exports.updateDays = functions.https.onRequest((req, res) => {
         res.send("failed: " + err)
     });
 
-    // get random quote of the day
-    const quotes = [];
-    let homeQuote = '';
-    const imgs = admin.firestore().collection('quotes');
-    imgs.get().then(result => {
-        result.forEach(doc => {
-            quotes.push(doc.get('picture'));
-        });
-        const randIndex = Math.floor(Math.random() * Math.floor(quotes.length));
-        homeQuote = quotes[randIndex];
-        return null;
-    }).catch(err => {
-        console.log("Failed: " + err);
-    });
-
-    const home = admin.firestore().collection('homeQuote');
-    home.get().then(result => {
-        result.forEach(doc => {
-            result.quote = homeQuote;
-        });
-        return null;
-    }).catch(err => {
-        console.log('Failed: ' + err);
-    });
-
-});;
+});
 
 exports.sendInfoDeskNotification =
     functions.firestore.document('questions/{questionID}').onCreate(async (snap, context) => {
@@ -305,25 +313,41 @@ exports.sendProviderRecoveryEmail = functions.firestore.document('provider_recov
 });
 
 exports.deleteOldChatMessages = functions.https.onRequest((req, res) => {
+    // const today = new Date();
+    // const ref = admin.firestore().collection('chats');
+    // ref.get().then((result) => {
+    //     let batch = admin.firestore().batch();
+    //     result.forEach(doc => {
+    //         if (doc.get('visibility') === false) {
+    //             batch.delete(doc.ref);
+    //         }
+    //         const dateSent = toDate(doc.get('timestamp'));
+    //         if (today > dateSent.addDays(0.5)) {
+    //             batch.delete(doc.ref);
+    //         }
+    //     });
+    //     batch.commit();
+    //     return 'finished';
+    // }).catch(error => {
+    //     console.log('did not check', error)
+    // });
+    // return 'worked';
     const today = new Date();
     const ref = admin.firestore().collection('chats');
-    ref.get().then((result) => {
-        let batch = admin.firestore().batch();
-        result.forEach(doc => {
-            if (doc.get('visibility') === false) {
-                batch.delete(doc.ref);
-            }
-            const dateSent = toDate(doc.get('timestamp'));
-            if (today > dateSent.addDays(0.5)) {
-                batch.delete(doc.ref);
+    ref.get().then((results) => {
+        results.forEach(async doc => {
+            let chatDate = new Date(doc.get('timestamp').seconds * 1000);
+            if ((chatDate.setDate(chatDate.getDate() + 1)) < today) {
+                await admin.firestore().collection('chatArchive').add(doc.data());
+                await admin.firestore().collection('chats').doc(doc.id).delete();
             }
         });
-        batch.commit();
-        return 'finished';
+        res.send('Success');
+        return null;
     }).catch(error => {
-        console.log('did not check', error)
+        console.log("Failure", error);
     });
-    return 'worked';
+
 });
 
 

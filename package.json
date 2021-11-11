@@ -42,7 +42,7 @@
     "core-js": "^2.5.4",
     "dotenv": "^8.2.0",
     "firebase": "^7.14.2",
-    "firebase-functions": "^3.13.1",
+    "firebase-functions": "^3.16.0",
     "ion2-calendar": "^3.0.0-rc.0",
     "ionic2-calendar": "^0.5.10",
     "ionic4-date-picker": "^0.1.0",
