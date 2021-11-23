@@ -160,6 +160,7 @@ exports.updateDays = functions.https.onRequest((req, res) => {
             // update challenge days
             // update challenge days
             let updateJoinedChallenges = doc.data().joinedChallenges;
+            // let updateJoinedChallenges = doc.get('joinedChallenges');
 
             for (let challenge of updateJoinedChallenges) {
                 if (challenge.dayComplete === true) {
@@ -183,10 +184,6 @@ exports.updateDays = functions.https.onRequest((req, res) => {
 
             currentUser.update({
                 joinedChallenges: updateJoinedChallenges
-            });
-
-            currentUser.update({
-                dailyQuote: getRandomQuote()
             });
 
         });
@@ -313,6 +310,7 @@ exports.sendProviderRecoveryEmail = functions.firestore.document('provider_recov
 });
 
 exports.deleteOldChatMessages = functions.https.onRequest((req, res) => {
+    // exports.deleteOldChatMessages = functions.firestore.document('chats/{docID}').onCreate((snap, context) => {
     // const today = new Date();
     // const ref = admin.firestore().collection('chats');
     // ref.get().then((result) => {
@@ -331,10 +329,11 @@ exports.deleteOldChatMessages = functions.https.onRequest((req, res) => {
     // }).catch(error => {
     //     console.log('did not check', error)
     // });
-    // return 'worked';
+    // return 'worked'
     const today = new Date();
     const ref = admin.firestore().collection('chats');
     ref.get().then((results) => {
+        res.status(200).send("Chats: " + results.length);
         results.forEach(async doc => {
             let chatDate = new Date(doc.get('timestamp').seconds * 1000);
             if ((chatDate.setDate(chatDate.getDate() + 1)) < today) {
