@@ -1,0 +1,130 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Questions For Resource Reviews
+    </ion-title>
+
+    <ion-buttons slot="start">
+      <ion-buttons slot="start">
+        <ion-menu-button autoHide="false"></ion-menu-button>
+      </ion-buttons>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <div class="side-padding" >
+    <ng-container *ngIf="quesFormBuilt">
+
+      <form [formGroup]="newResourceQuestionsForm" >
+  
+        <div formArrayName="reviewQuestions"> 
+  
+          <h3>Edit Existing Questions:</h3>
+  
+          <div *ngFor="let form_group of getQuestionsFormArray.controls; let i = index">
+
+            <div [formGroupName]="i">
+              <ion-item class="width-50">
+                <ion-label position="stacked" > <h4>Q{{i + 1}}: </h4> </ion-label>
+  
+                <ion-input id="q-{{ i }}" type="text" formControlName="question_text"> 
+                </ion-input>
+                <ion-button *ngIf="canDeleteExistingQuestion(i)" slot="end" color="danger" (click)="removeExistingQuestionFromForm(i)">  <ion-icon name="trash"></ion-icon> </ion-button>
+              </ion-item>
+  
+              <ion-item class="width-25">
+                <ion-label position="stacked" > Applies to Resources of Type: </ion-label>
+  
+                <ion-select id="existing-ques-type-{{i}}" interface="popover" multiple="true" formControlName="question_type">
+                  <ion-select-option *ngFor="let type of allResourceTypes; let i = index" value="{{type}}" [attr.selected]="type === existingQuestionTypes[i]"> {{type}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item class="width-25">
+                <ion-label position="stacked" > Enter a Descriptive Tag for the Question 
+                  <ion-badge *ngIf="form_group.touched && form_group.invalid" color="danger">
+                    Required
+                  </ion-badge>
+                </ion-label>
+  
+                <ion-input id="q-{{ i }}" type="text" formControlName="question_tag"> 
+
+                  
+                </ion-input>
+              </ion-item>
+
+            </div>
+        
+          </div>
+  
+        </div>
+  
+        <div formArrayName="newQuestions">
+          <h3>Create New Questions:</h3>
+          <div *ngFor="let form_group of getNewQuestFormArray.controls; let i = index">
+            
+            <div [formGroupName]="i">
+              <ion-item class="width-50">
+                <ion-label position="stacked">
+                   <h4> Q{{i + 1}}: 
+                      <ion-badge *ngIf="form_group.touched && form_group.invalid" color="danger">
+                        Required
+                      </ion-badge>
+                   </h4>
+                   
+                </ion-label>
+    
+                <ion-input id="q-{{ i }}" type="text"  placeholder="Enter a new question!" formControlName="question_text"></ion-input>
+                <ion-button slot="end" color="danger" (click)="removeNewQuestionFromForm(i)">  <ion-icon name="trash"></ion-icon> </ion-button>
+              </ion-item>
+  
+  
+              <ion-item class="width-25">
+                <ion-label position="stacked" > Applies to Resources of Type: </ion-label>
+  
+                <ion-select id="new-ques-type-{{i}}" interface="popover" multiple="true" formControlName="question_type">
+                  <ion-select-option *ngFor="let type of allResourceTypes; let i = index" value="{{type}}" [attr.selected]=" type === 'All' ">{{type}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+  
+              <ion-item class="width-50">
+                <ion-label position="stacked">
+                    Enter a Descriptive Tag for the Question
+                      <ion-badge *ngIf="form_group.touched && form_group.invalid" color="danger">
+                        Required
+                      </ion-badge>
+                </ion-label>
+    
+                <ion-input id="q-{{ i }}" type="text"  placeholder="Enter a new question!" formControlName="question_tag"></ion-input>
+              </ion-item>
+
+            </div>
+  
+          </div>
+  
+        </div>
+
+  
+        <ion-button type="button" (click)="createNewQuestionFormGroups()">Add New Question!</ion-button>
+      </form>
+
+    </ng-container>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-row no-padding text-center>
+    <ion-col *ngIf="quesFormBuilt" size="6" offset="3">
+      <ion-button button [routerLink]="['/resource_questions/']" expand="block" fill="solid" color="success"
+        (click)="submitNewResourceQuestions()" [disabled]="!newResourceQuestionsForm.valid" >
+        <ion-icon name="save" ></ion-icon>
+        Submit New Resource Review Questions
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
+

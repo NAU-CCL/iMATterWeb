@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {PregnancyUpdateCard, PregnancyUpdatesService} from '../../services/pregnancyUpdates/pregnancy-updates.service';
+import {PregnancyUpdateCard, PregnancyUpdatesService} from '../../services/PregnancyUpdates/pregnancy-updates.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AlertController, ToastController} from '@ionic/angular';
 import {Storage} from '@ionic/storage';
@@ -87,7 +87,7 @@ export class UpdatesContentPage implements OnInit {
   }
 
   updatePregnancyUpdate() {
-    
+
     //IMPORTANT: add the ID of this card
     this.pregnancyUpdateForm.addControl('id', this.formBuilder.control(this.pregnancyUpdateCard.id));
 
