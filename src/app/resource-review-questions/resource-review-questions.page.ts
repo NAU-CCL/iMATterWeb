@@ -31,20 +31,22 @@ export class ResourceReviewQuestionsPage implements OnInit {
 
   ngOnInit() {
 
-   this.getReviewQuestions.getAllResourceTypes().get().then( querySnap => {
-     querySnap.forEach( docSnap => {
-      this.allResourceTypes = docSnap.data()["types"];
+    this.initializePage();
 
+  }
 
-      // {types: [types_array]}
-      console.log(`Resource types array ${JSON.stringify( this.allResourceTypes) }`);
-      this.initializeQuestionForm()
-     })
-   });
-
-  
-
-
+  initializePage()
+  {
+    this.getReviewQuestions.getAllResourceTypes().get().then( querySnap => {
+      querySnap.forEach( docSnap => {
+       this.allResourceTypes = docSnap.data()["types"];
+ 
+ 
+       // {types: [types_array]}
+       console.log(`Resource types array ${JSON.stringify( this.allResourceTypes) }`);
+       this.initializeQuestionForm()
+      })
+    });
   }
 
 
@@ -172,7 +174,9 @@ export class ResourceReviewQuestionsPage implements OnInit {
       }
 
 
-      this.getReviewQuestions.addNewReviewQuestionsForResources( newQuesObj );
+      this.getReviewQuestions.addNewReviewQuestionsForResources( newQuesObj ).then( done => {
+        this.initializePage();
+        console.log(`Questions saved.`)});
 
 
   }

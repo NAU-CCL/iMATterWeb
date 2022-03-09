@@ -50,14 +50,16 @@ export class ResourceReviewQuestionsService {
     return this.afs.collection<Review>("resourceReviews", ref => ref.where('resourceID','==', resource_id)).valueChanges();
   }
 
-  addNewReviewQuestionsForResources( newQuestions: ReviewQuestions )
+  async addNewReviewQuestionsForResources( newQuestions: ReviewQuestions )
   {
     // Get the current review question document so we can change its is_current field to false.
-    this.afs.collection<ReviewQuestions[]>('resourceReviewQuestions').ref.where('is_current','==', true ).limit(1).get().then( querySnap =>{
+    await this.afs.collection<ReviewQuestions[]>('resourceReviewQuestions').ref.where('is_current','==', true ).limit(1).get().then( querySnap =>{
       querySnap.forEach( docSnap => {
         docSnap.ref.update({is_current: false});
         
         this.afs.collection('resourceReviewQuestions').ref.add(newQuestions);
+
+        return true;
       })
     });
 
