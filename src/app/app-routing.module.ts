@@ -169,6 +169,10 @@ const routes: Routes = [
   {
     path: 'locations',
     loadChildren: () => import('./locations/locations.module').then(m => m.LocationsPageModule)
+  },
+  {
+    path: 'resource_questions',
+    loadChildren: () => import('./resource-review-questions/resource-review-questions.module').then( m => m.ResourceReviewQuestionsPageModule)
   }
   ,
   {
