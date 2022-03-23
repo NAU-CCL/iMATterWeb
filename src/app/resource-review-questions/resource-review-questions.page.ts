@@ -210,20 +210,4 @@ export class ResourceReviewQuestionsPage implements OnInit {
     return typeof data === 'string';
   };
 
-  // Checks if type is contained inside existingQuestionType string.
-  checkIfTypeIsSelected(existingQuestionType: string[], typeIndex: number, type: string): boolean
-  {
-    if( typeIndex < existingQuestionType.length)
-    {
-      //console.log(`Existing type: ${JSON.stringify(existingQuestionType)}. Type: ${type}`);
-      let containsType = existingQuestionType[typeIndex].includes(type);
-
-      //console.log(`Checking if type: ${existingQuestionType[typeIndex]} contains Type: ${type}. Contains type ${containsType}`);
-
-      return containsType;
-    }
-
-    return false;
-  }
-
 }
