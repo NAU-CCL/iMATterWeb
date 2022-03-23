@@ -109,6 +109,7 @@ export class ResourceReviewQuestionsPage implements OnInit {
     {
       this.getQuestionsFormArray.push( this.fb.group({
         question_text: [this.existingQuestionArray[index], Validators.required],
+        // Each element in the existing question array is a comma seperated string of types. Convert the string to an array of strings
         question_type: [ this.existingQuestionTypes[index].split(','), Validators.required], // This is where the select boxes get their default selections
         question_tag: [this.existingQuestionTags[index], Validators.required]
       }) );
