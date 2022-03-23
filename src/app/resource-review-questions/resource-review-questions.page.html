@@ -40,8 +40,9 @@
               <ion-item class="width-25">
                 <ion-label position="stacked" class="bold-labels"> Applies to Resources of Type: </ion-label>
   
-                <ion-select id="existing-ques-type-{{i}}" interface="popover" multiple="true" formControlName="question_type">
-                  <ion-select-option *ngFor="let type of allResourceTypes; let i = index" value="{{type}}" [attr.selected]="type === existingQuestionTypes[i]"> {{type}}</ion-select-option>
+                <ion-select id="existing-ques-type-{{i}}" interface="alert" multiple="true" formControlName="question_type">
+                  <ion-select-option *ngFor="let type of allResourceTypes; let i = index" value="{{type}}" [attr.selected]="checkIfTypeIsSelected( existingQuestionTypes, i, type)">{{type}}</ion-select-option>
+                  
                 </ion-select>
               </ion-item>
 
