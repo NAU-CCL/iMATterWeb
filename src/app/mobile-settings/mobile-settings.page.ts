@@ -74,6 +74,8 @@ export class MobileSettingsPage implements OnInit {
   public typesOfGC: Array<GiftCardType>;
   public pointsToRedeemGC: number;
   public providerTypes: Observable<any>;
+  public autoChatLifeSpan: number;
+  public maxAutoChats: number;
 
 
   // display booleans
@@ -83,7 +85,6 @@ export class MobileSettingsPage implements OnInit {
   public displayAutoPic: boolean;
   public displayProfilePics: boolean;
   public displaySecurityQs: boolean;
-  public displayHoursForChats: boolean;
   public displayNumberForChats: boolean;
   public displayEmailAdmin: boolean;
   public displayTotalPoints: boolean;
@@ -136,7 +137,6 @@ export class MobileSettingsPage implements OnInit {
     this.initDisplaysToFalse();
 
     this.getSecurityQs();
-    this.getChatRoomHourSetting();
     this.getPointsToRedeemGC();
     this.getCurrentGCEmail();
     this.getGCTypes();
@@ -144,8 +144,7 @@ export class MobileSettingsPage implements OnInit {
     this.getProfilePics();
     this.providerTypes = this.getProviderTypes();
     this.getAdminPic();
-    this.getChatRoomLifeSetting();
-    this.getChatRoomNumberSetting();
+    this.getChatSettings();
     this.getMobileNotifSettings();
 
     gapi.load("client:auth2", function() {
@@ -178,21 +177,16 @@ export class MobileSettingsPage implements OnInit {
     });
   }
 
-  getChatRoomHourSetting() {
-    SettingsService.getChatRoomSettings().then((result) => {
-      this.chatHoursToLive = result.get('hours');
-    });
-  }
+  // Get the chat settings object from the db as a json object.
+  getChatSettings()
+  {
+    SettingsService.getChatRoomSettings().then((docSnap) => {
 
-  getChatRoomNumberSetting() {
-    SettingsService.getChatRoomSettings().then((result) => {
-      this.chatNumberToLive = result.get('numberOfChats');
-    });
-  }
+      // Call .data() to return the doc as an object.
+      let chatRoomSettingsObj = docSnap.data();
 
-  getChatRoomLifeSetting() {
-    SettingsService.getChatRoomSettings().then((result) => {
-      this.chatLifeSetting = result.get('lifeType');
+      this.autoChatLifeSpan = chatRoomSettingsObj.autoChatLifeSpanInSeconds;
+      this.maxAutoChats = chatRoomSettingsObj.maxAutoChatsOnScreen;
       console.log(this.chatLifeSetting);
     });
   }
@@ -228,24 +222,20 @@ export class MobileSettingsPage implements OnInit {
     return this.msService.getProviderTypes();
   }
 
-  updateChatLifeSetting(chatLifeSetting) {
-    this.msService.updateChatLifeType(chatLifeSetting);
-  }
-
-  async updateNumberOfChatsToLive(): Promise<void> {
+  async updateMaxAutoChats(): Promise<void> {
     const alert = await this.alertController.create({
-      header: 'How many chats should stay visible?',
+      header: 'How many auto chats should be shown at a once(i.e. "John has entered the chat")?',
       inputs: [
-        { name: 'newNumber', placeholder: 'New Number of Chats Visible', type: 'number'},
+        { name: 'newMaxAutoChats', placeholder: 'Maximum Auto Chats to Show at Once', type: 'number'},
       ],
       buttons: [
         { text: 'Cancel' },
         { text: 'Update',
           handler: data => {
-            this.msService.updateNumberOfChatsLive(
-                data.newNumber
+            this.msService.updateMaxAutoChats(
+                data.newMaxAutoChats
             );
-            this.getChatRoomNumberSetting();
+            this.maxAutoChats = data.newMaxAutoChats;
           },
         },
       ],
@@ -253,20 +243,20 @@ export class MobileSettingsPage implements OnInit {
     await alert.present();
   }
 
-  async updateChatHoursToLive(): Promise<void> {
+  async updateAutoChatLifeSpan(): Promise<void> {
     const alert = await this.alertController.create({
-      header: 'How long should chats stay visible?',
+      header: 'How long should auto chats stay visible before disappearing?',
       inputs: [
-        { name: 'newHours', placeholder: 'New Hours to Last', type: 'number'},
+        { name: 'autoChatLifeSpan', placeholder: 'New auto chat lifespan', type: 'number'},
       ],
       buttons: [
         { text: 'Cancel' },
         { text: 'Update',
           handler: data => {
-            this.msService.updateChatHourstoLive(
-                data.newHours
+            this.msService.updateChatLifeSpan(
+                data.autoChatLifeSpan
             );
-            this.getChatRoomHourSetting();
+            this.autoChatLifeSpan = data.autoChatLifeSpan;
           },
         },
       ],
@@ -515,7 +505,6 @@ export class MobileSettingsPage implements OnInit {
     this.displayAutoPic = false;
     this.displayProfilePics = false;
     this.displaySecurityQs = false;
-    this.displayHoursForChats = false;
     this.displayNumberForChats = false;
     this.displayEmailAdmin = false;
     this.displayTotalPoints = false;
@@ -537,12 +526,6 @@ export class MobileSettingsPage implements OnInit {
       this.displayAutoPic = display;
       this.displayProfilePics = display;
       this.displaySecurityQs = display;
-
-    } 
-    else if (displayType === 'chatRoom') 
-    {
-      this.displayHoursForChats = display;
-      this.displayNumberForChats = display;
 
     } 
     else if (displayType === 'giftCard') 
