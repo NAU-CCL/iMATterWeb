@@ -171,4 +171,14 @@ export class SettingsService {
   removeProviderType(docID) {
     return this.providerTypeCollection.doc(docID).delete();
   }
+
+  updateMaxAutoChats( newMaxAutoChats:number )
+  {
+    this.afs.collection('settings').ref.doc('chatroomSettings').update({maxAutoChatsOnScreen:newMaxAutoChats})
+  }
+
+  updateChatLifeSpan( newLifeSpan:number )
+  {
+    this.afs.collection('settings').ref.doc('chatroomSettings').update({autoChatLifeSpanInSeconds:newLifeSpan})
+  }
 }
