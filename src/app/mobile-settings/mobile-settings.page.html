@@ -138,17 +138,17 @@
     </div>
 
 <!-- User ChatRoom Settings -->
-      <!-- Hide all User ChatRoom Settings -->
+      <!-- Hide all User ChatRoom Settings ie header minimized -->
     <div *ngIf="displayChatRoom == false" class="ion-padding-bottom">
-      <ion-list-header class="header" (click)="displayChatRoom = true"> Cohort Chat Room Settings
+      <ion-list-header class="header" (click)="displayChatRoom = true"> Chat Room Settings
         <ion-icon size="large" name="arrow-dropright"></ion-icon>
       </ion-list-header>
     </div>
 
-    <!-- Show all User ChatRoom Settings -->
+    <!-- Show all User ChatRoom Settings ie header not minimized-->
     <div *ngIf="displayChatRoom == true" class="ion-padding-bottom">
       <ion-list-header class="header" (click)="displayChatRoom = false; displaySubCategories(false, 'chatRoom')">
-        Cohort Chat Room Settings
+        Chat Room Settings
         <ion-icon size="large" name="arrow-dropdown"></ion-icon>
       </ion-list-header>
 
