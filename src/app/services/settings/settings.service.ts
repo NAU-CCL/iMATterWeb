@@ -181,4 +181,64 @@ export class SettingsService {
   {
     this.afs.collection('settings').ref.doc('chatroomSettings').update({autoChatLifeSpanInSeconds:newLifeSpan})
   }
+
+
+  // Updates list of comma seeperated emails that denote which admins receive an email notification when a problem report is submitted.
+  // Returns the updated list of admin feedback emails as a string array.
+  async updateAdminEmails( newEmail: string ): Promise<string[]>
+  {
+    let currentAdminEmails: string[];
+    await this.afs.collection('settings').doc('adminSettings').ref.get().then( (docSnap) => {
+      let adminSettings = docSnap.data();
+      // Get current admin emails so we can add a new email to it.
+      currentAdminEmails = adminSettings.adminEmails;
+      
+      // Add the new email to the array list of admin emails.
+      currentAdminEmails.push(newEmail);
+
+      // Update the document with the new admin emails.
+      docSnap.ref.update({'adminEmails': currentAdminEmails});
+
+      console.log(`New admin emails array in service is ${ JSON.stringify(currentAdminEmails) }`);
+    })
+
+    return currentAdminEmails;
+  }
+
+  getAdminEmails(): Promise<string[]>
+  {
+
+    return this.afs.collection('settings').doc('adminSettings').ref.get().then( (docSnap) => {
+      let adminSettings = docSnap.data();
+
+      let currentAdminEmails = adminSettings.adminEmails;
+
+      console.log(`Current admin emails array in service is ${currentAdminEmails}`);
+
+      return currentAdminEmails;
+    })
+  }
+
+  async  removeAdminEmail(emailToRemove: string): Promise<string[]>
+  {
+    let newAdminEmailsArray: string[];
+
+    await this.afs.collection('settings').doc('adminSettings').ref.get().then( (docSnap) => {
+      let adminSettings = docSnap.data();
+      // Get current admin emails so we can add a new email to it.
+      let currentAdminEmails = adminSettings.adminEmails;
+      // Add the new email to the comma seperated list of admin emails.
+      newAdminEmailsArray = currentAdminEmails.filter( (email) => {
+        return email != emailToRemove;
+      });
+
+      // Update the document with the new admin emails.
+      docSnap.ref.update({'adminEmails': newAdminEmailsArray});
+
+      console.log(`Removed old admin email ${emailToRemove} new admin email array is ${ JSON.stringify(newAdminEmailsArray) }`);
+    })
+
+    return newAdminEmailsArray;
+  }
+
 }

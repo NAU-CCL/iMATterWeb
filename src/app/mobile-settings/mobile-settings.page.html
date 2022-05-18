@@ -147,7 +147,7 @@
 
     <!-- Show all User ChatRoom Settings ie header not minimized-->
     <div *ngIf="displayChatRoom == true" class="ion-padding-bottom">
-      <ion-list-header class="header" (click)="displayChatRoom = false; displaySubCategories(false, 'chatRoom')">
+      <ion-list-header class="header" (click)="displayChatRoom = false">
         Chat Room Settings
         <ion-icon size="large" name="arrow-dropdown"></ion-icon>
       </ion-list-header>
@@ -604,7 +604,8 @@
         <ion-icon size="large" name="arrow-dropright"></ion-icon>
       </ion-list-header>
     </div>
-    <!-- Show all Provider Settings -->
+
+    <!-- Show all Provider Settings-->
     <div *ngIf="displayProviderSettings == true" class="ion-padding-bottom">
       <ion-list-header class="header" (click)="displayProviderSettings = false" (click)="displaySubCategories(false, 'provider')">
         Provider Settings
@@ -667,5 +668,57 @@
         </ion-item>
       </div>
     </div>
+
+
+    <!-- Feedback Management Settings -->
+    <!-- Hide all feedback management Settings -->
+    <div *ngIf="displayFeedBackSettings == false" class="ion-padding-bottom">
+      <ion-list-header class="header" (click)="displayFeedBackSettings = true"> Feedback Management
+        <ion-icon size="large" name="arrow-dropright"></ion-icon>
+      </ion-list-header>
+    </div>
+    
+    <!-- Show feedback management settings-->
+    <div *ngIf="displayFeedBackSettings == true" class="ion-padding-bottom">
+      <ion-list-header class="header" (click)="displayFeedBackSettings = false">
+        Feedback Management
+        <ion-icon size="large" name="arrow-dropdown"></ion-icon>
+      </ion-list-header>
+
+      <!-- Auto chat max count container -->
+      <ion-list>
+        <ion-item>
+          <ion-label class="text-button"> <b>Who to notify when new bugs/feedback are reported?</b></ion-label>
+        </ion-item>
+
+
+        <ion-list *ngFor="let email of currentFeedbackEmails; let i = index" class="admin-emails-padding-left">
+          <ion-item class="existing-admin-email">
+            {{email}}
+
+            <ion-button *ngIf="currentFeedbackEmails.length > 1" slot="end" color="danger" (click)="removeExistingAdminEmail(email)">  <ion-icon name="trash"></ion-icon> </ion-button>
+          </ion-item>
+        </ion-list>
+        
+        <form [formGroup]="feedbackManagementForm" >
+
+          <ion-item class="ionic-margin-left">
+            <ion-label for="feedback-email" position="stacked" class="new-admin-email-label">Email: </ion-label>
+  
+            <ion-input id="feedback-email" type="text" formControlName="newFeedbackEmail">
+            </ion-input>
+          </ion-item>
+
+        </form>
+
+        <ion-item>
+          <ion-button slot="end" class="fill-button" (click)="addNewEmailInput()">Add New Email</ion-button>
+        </ion-item>
+
+      </ion-list>
+
+    </div>
+
+
   </ion-list>
 </ion-content>

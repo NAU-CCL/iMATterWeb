@@ -8,6 +8,8 @@ import { AlertController } from '@ionic/angular';
 import { Observable, Scheduler } from 'rxjs';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 import {HttpClient} from '@angular/common/http';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
 
 declare var gapi: any;
 @Component({
@@ -45,6 +47,7 @@ export class MobileSettingsPage implements OnInit {
     timeOfDay: ''
   }
 
+
   constructor(public msService: SettingsService,
               public storage: Storage,
               public router: Router,
@@ -76,6 +79,9 @@ export class MobileSettingsPage implements OnInit {
   public providerTypes: Observable<any>;
   public autoChatLifeSpan: number;
   public maxAutoChats: number;
+  public displayFeedBackSettings: boolean = false;
+  public feedbackManagementForm: FormGroup;
+  public currentFeedbackEmails: string[];
 
 
   // display booleans
@@ -146,6 +152,7 @@ export class MobileSettingsPage implements OnInit {
     this.getAdminPic();
     this.getChatSettings();
     this.getMobileNotifSettings();
+    this.initFeedbackManagementSettings();
 
     gapi.load("client:auth2", function() {
       gapi.auth2.init({client_id: "626066789753-d0jm6t0ape6tnfvomv2ojuvf73glllk5.apps.googleusercontent.com"});
@@ -711,6 +718,39 @@ updateSurveyNotifSettings()
       'Newly added learning modules and surveys will not appear to users until push notifications are sent for them. ' +
       '<br><br> This configures the times that notifications for new learning modules and surveys will be sent to mobile application users.' +
       '<br><br> The second notification time setting is optional and can be turned on and off using the toggle.');
+  }
+
+  initFeedbackManagementSettings()
+  {
+    this.feedbackManagementForm = new FormGroup({
+      newFeedbackEmail: new FormControl('')
+    });
+
+    this.msService.getAdminEmails().then( (adminEmailString) => {
+      this.currentFeedbackEmails = adminEmailString;
+    })
+  }
+
+  addNewEmailInput()
+  {
+    // Get the new email from the form group
+    let newEmailToAdd = this.feedbackManagementForm.controls.newFeedbackEmail.value;
+    console.log(`Adding new feedback email ${newEmailToAdd}`);
+
+    // Add the new email to the list of feedback emails.
+    this.msService.updateAdminEmails( newEmailToAdd ).then((newAdminEmails) =>{
+      console.log(`New Admin emails returned from component promise is ${newAdminEmails}`)
+      this.currentFeedbackEmails = newAdminEmails;
+    });
+
+    this.feedbackManagementForm.controls.newFeedbackEmail.setValue('');
+  }
+
+  removeExistingAdminEmail( existingEmail )
+  {
+    this.msService.removeAdminEmail(existingEmail).then((newAdminEmailArray) => {
+      this.currentFeedbackEmails = newAdminEmailArray;
+    });
   }
 }
 
