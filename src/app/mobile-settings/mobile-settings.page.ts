@@ -11,6 +11,7 @@ import {HttpClient} from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 
+
 declare var gapi: any;
 @Component({
   selector: 'app-mobile-settings',
@@ -106,6 +107,11 @@ export class MobileSettingsPage implements OnInit {
   public displayNotificationSettings: boolean;
   public displayLMNotifSettings: boolean; //learning module
   public displaySurveyNotifSettings: boolean;
+
+  // Feedback email booleans
+  public feedbackEmailAlreadyExists = false;
+  public feedbackEmptyEmail = false;
+  public feedbackInvalidEmail = false;
 
   // for uploading image
   UploadedFileURL: Observable<string>;
@@ -733,13 +739,53 @@ updateSurveyNotifSettings()
 
   addNewEmailInput()
   {
+    let formWarnings = document.querySelector('.form-warning') as HTMLSpanElement;
+
+    if( formWarnings != null)
+    {
+      formWarnings.classList.remove('animate-form-warning');
+
+      setTimeout(()=>{formWarnings.classList.add('animate-form-warning')}, 100);
+    }
+
+    this.feedbackEmailAlreadyExists = false;
+    this.feedbackEmptyEmail = false;
+    this.feedbackInvalidEmail = false;
+
+    
+
     // Get the new email from the form group
     let newEmailToAdd = this.feedbackManagementForm.controls.newFeedbackEmail.value;
-    console.log(`Adding new feedback email ${newEmailToAdd}`);
+
+    // If the email already exists, do not add it again.
+    if( this.currentFeedbackEmails.includes(newEmailToAdd.trim()) )
+    {
+      this.feedbackEmailAlreadyExists = true;
+      return false;
+    }
+    else if( newEmailToAdd.trim() === '' ) // If email only contains whitespace.
+    {
+      this.feedbackEmptyEmail = true;
+      return false;
+    }
+    // check if the email entered is of the form anything@anything.anything. This is not an exhaustive check by any means. 
+    // This is extreamly basic and only looks for the @ and . characters with stuff inbetween them.
+    else if( /[^@]+@.+\..+/.exec(newEmailToAdd) === null ) 
+    {
+      this.feedbackInvalidEmail = true;
+      return false;
+    }
+    /*
+    let formWarnings = document.querySelector('.form-warning') as HTMLSpanElement;
+    
+    formWarnings.classList.remove('animate-form-warning');
+
+    formWarnings.classList.add('animate-form-warning');
+*/
 
     // Add the new email to the list of feedback emails.
     this.msService.updateAdminEmails( newEmailToAdd ).then((newAdminEmails) =>{
-      console.log(`New Admin emails returned from component promise is ${newAdminEmails}`)
+      //console.log(`New Admin emails returned from component promise is ${newAdminEmails}`);
       this.currentFeedbackEmails = newAdminEmails;
     });
 
