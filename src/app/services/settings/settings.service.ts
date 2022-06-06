@@ -219,7 +219,7 @@ export class SettingsService {
     })
   }
 
-  async  removeAdminEmail(emailToRemove: string): Promise<string[]>
+  async removeAdminEmail(emailToRemove: string): Promise<string[]>
   {
     let newAdminEmailsArray: string[];
 

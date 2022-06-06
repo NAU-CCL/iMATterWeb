@@ -745,7 +745,7 @@ updateSurveyNotifSettings()
     {
       formWarnings.classList.remove('animate-form-warning');
 
-      setTimeout(()=>{formWarnings.classList.add('animate-form-warning'); console.log(`Readding form animation class`) }, 100);
+      setTimeout(()=>{formWarnings.classList.add('animate-form-warning')}, 100);
     }
 
     this.feedbackEmailAlreadyExists = false;
@@ -756,7 +756,6 @@ updateSurveyNotifSettings()
 
     // Get the new email from the form group
     let newEmailToAdd = this.feedbackManagementForm.controls.newFeedbackEmail.value;
-    console.log(`Adding new feedback email ${newEmailToAdd}`);
 
     // If the email already exists, do not add it again.
     if( this.currentFeedbackEmails.includes(newEmailToAdd.trim()) )
@@ -786,7 +785,7 @@ updateSurveyNotifSettings()
 
     // Add the new email to the list of feedback emails.
     this.msService.updateAdminEmails( newEmailToAdd ).then((newAdminEmails) =>{
-      console.log(`New Admin emails returned from component promise is ${newAdminEmails}`);
+      //console.log(`New Admin emails returned from component promise is ${newAdminEmails}`);
       this.currentFeedbackEmails = newAdminEmails;
     });
 
