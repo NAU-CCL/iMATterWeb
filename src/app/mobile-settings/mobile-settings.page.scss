@@ -39,3 +39,27 @@
 .existing-admin-email{
   font-size:15px;
 }
+
+.form-warning{
+  color: red;
+  font-weight: bold;
+  display:inline-block;
+}
+
+@keyframes form-warning-flash{
+  0% {color: rgb(255, 180, 180);
+      transform: scale(.50)}
+  33% {color: rgb(255, 121, 121);
+    transform: scale(1.00)}
+  66% {color: rgb(255, 60, 60);
+    transform: scale(1.10)}
+  100% {color: rgb(255, 0, 0);
+    transform: scale(1.00)}
+}
+
+.animate-form-warning{
+  animation-name: form-warning-flash;
+  animation-duration: .5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: none;
+}
