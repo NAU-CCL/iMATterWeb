@@ -1,7 +1,8 @@
 .header {
-  background-color: var(--secondary-color);
+  background-color: #2a96e8;
   font-size: 18px;
   font-weight: bold;
+  color: #FFFFFF;
 }
 
 .subheader {
@@ -16,4 +17,25 @@
 
 .noHighlight {
   --background: var(--secondary-color);
+}
+
+
+.ionic-padding-left{
+  padding-left: 16px;
+}
+
+.admin-emails-padding-left{
+  padding-left: 22px;
+}
+
+.ionic-margin-left{
+  margin-left: 16px;
+}
+
+.new-admin-email-label{
+  font-size: 22px;
+}
+
+.existing-admin-email{
+  font-size:15px;
 }
