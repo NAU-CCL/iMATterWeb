@@ -18,7 +18,7 @@ const {
 } = process.env;
 
 exports.updateQuote = functions.https.onRequest((req, res) => {
-    const quotes = ['empty'];
+    const quotes = [];
     let homeQuote = 'empty';
     const imgs = admin.firestore().collection('quotes');
     imgs.get().then(result => {
