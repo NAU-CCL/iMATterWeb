@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore'
-import { map, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs';
 import { Timestamp } from 'rxjs/internal/operators/timestamp';
@@ -30,7 +30,7 @@ export class SurveyService {
 
     constructor(private angularfs: AngularFirestore) {
         // gets the collection of surveys
-        this.surveyCollection = this.angularfs.collection<Survey>('surveys-v2');
+        this.surveyCollection = this.angularfs.collection<any>('surveys-v2');
 
         //  looks for changes and updates, also grabs the data
         this.surveys = this.surveyCollection.snapshotChanges().pipe(
@@ -51,10 +51,10 @@ export class SurveyService {
 
     // gets an individual survey with id provided
     getSurvey(id: string) {
-        return this.surveyCollection.doc<Survey>(id).valueChanges().pipe(
+        return this.surveyCollection.doc<any>(id).valueChanges().pipe(
             take(1),
+            filter( (val)=> val ), // This observable emits undefined values, so filter them out. Not sure why it emits some surveys as undefined but it does...
             map(survey => {
-                survey.id = id;
                 return survey;
             })
         );

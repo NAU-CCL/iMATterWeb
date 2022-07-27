@@ -201,25 +201,30 @@ export class SurveysPage implements OnInit {
             userArray.forEach(user => {
                 if (user.answeredSurveys !== undefined) {
                     user.answeredSurveys.forEach(survey => {
-                        console.log(survey.timeStart);
-                        var startTime = new Date(survey.date + 'T' + survey.timeStart.split(' ')[0] + ':00');
+                        
 
                         this.surveyService.getSurvey(survey.survey).subscribe(event => {
-                            this.eventSource.push({
-                                title: user.username + ": " + event.title,
-                                adminLink: event.adminLink,
-                                startTime: startTime,
-                                endTime: startTime,
-                                allDay: false,
-                            });
-                            this.myCal.loadEvents();
-                            this.userSurveys.push({
-                                title: user.username + ": " + event.title,
-                                adminLink: event.adminLink,
-                                startTime: startTime,
-                                endTime: startTime,
-                                allDay: false,
-                            });
+
+                            //console.log(`EVENT IS ${JSON.stringify(event)}`);
+                            // survey time end is not null/undefined and survey.timeStart is not null/undefined, add the survey to the calendar.
+                            if( survey.timeEnd && survey.timeStart && event.title)
+                            {
+                                this.eventSource.push({
+                                    title: user.username + ": " + event.title,
+                                    adminLink: event.adminLink,
+                                    startTime: survey.timeStart.toDate(),
+                                    endTime: survey.timeEnd.toDate(),
+                                    allDay: false,
+                                });
+                                this.myCal.loadEvents();
+                                this.userSurveys.push({
+                                    title: user.username + ": " + event.title,
+                                    adminLink: event.adminLink,
+                                    startTime: survey.timeStart.toDate(),
+                                    endTime: survey.timeEnd.toDate(),
+                                    allDay: false,
+                                });
+                            }
                         });
                     });
                 }
