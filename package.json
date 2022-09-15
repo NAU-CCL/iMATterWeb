@@ -38,7 +38,7 @@
     "@mobiscroll/angular": "https://npm.mobiscroll.com/@mobiscroll/angular-trial/-/angular-trial-5.9.1.tgz",
     "@types/gapi.auth2": "0.0.51",
     "@types/jest": "^25.2.1",
-    "chart.js": "^3.0.0-alpha",
+    "chart.js": "^3.0.0",
     "core-js": "^2.5.4",
     "dotenv": "^8.2.0",
     "firebase": "^7.14.2",

@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import  Chart  from "chart.js";
+import  Chart  from "chart.js/auto";
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase/app';

@@ -105,6 +105,36 @@ exports.sendRecoveryEmail = functions.firestore.document('recoveryEmail/{docID}'
     }).then(res => console.log('successfully sent that mail')).catch(err => console.log(err));
 });
 
+exports.sendRequestAccessEmail = functions.https.onCall( (data, context) => {
+
+    let authData = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: SENDER_EMAIL,
+            pass: SENDER_PASS
+        }
+    });
+
+    let textBody = data.message;
+    let to = data.adminEmails;
+
+    return authData.sendMail({
+        from: 'imatternotification@gmail.com',
+        to: to, // list of receivers
+        subject: "Imatter InfoDesk", // Subject line
+        text: textBody, // plain text body
+        html: textBody // html body
+        //res.send("sent");
+    }, (error, info) => {
+        if( error ){
+            return  error.toString();
+        }
+        return  'Sent' ;
+    })
+});
+
 
 exports.sendGCRequestEmail = functions.firestore.document('usersPointsRedeem/{docID}').onCreate((snap, context) => {
     const data = snap.data();

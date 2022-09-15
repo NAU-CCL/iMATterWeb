@@ -9,6 +9,14 @@ const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
+    path: 'request-access',
+    loadChildren: () => import('./app-access-form/app-access-form.module').then(m => m.AppAccessFormPageModule)
+  },
+  {
+    path: 'sent-request',
+    loadChildren: () => import('./app-access-form/sent-request/sent-request.module').then( m => m.SentRequestPageModule)
+  },
+  {
     path: 'login',
     loadChildren: () => import('./handleUserPages/login/login.module').then(m => m.LoginPageModule)
   },
@@ -178,7 +186,7 @@ const routes: Routes = [
   {
     path: 'add-location',
     loadChildren: () => import('./locations/add-location/add-location.module').then(m => m.AddLocationPageModule)
-  }
+  },
 
 
 ];

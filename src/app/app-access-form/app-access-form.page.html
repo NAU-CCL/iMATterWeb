@@ -1,0 +1,140 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Request Access</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form  #accessForm="ngForm" (ngSubmit)="sendEmail()">
+    <ion-grid>
+      <ion-row color="primary" justify-content-center>
+        <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+          <div text-center>
+            <h3>Welcome to iMATter</h3>
+          </div>
+          <br>
+          <h4>Please fill out all of the following:</h4>
+          <hr>
+
+
+          <div id="page1" padding [hidden]="pageCounter > 0">
+
+
+            <ion-item>
+              <ion-input name="email" type="email" placeholder="Please enter your email" [(ngModel)]="application.email" required></ion-input>
+            </ion-item>
+
+            
+            <h6>Please enter the State you live in:</h6>
+            <ion-item>
+              <ion-select required placeholder="Enter State" name="stateName" [(ngModel)]="application.stateOfResidence">
+                <ion-select-option *ngFor ="let state of stateList">{{state}} </ion-select-option>
+              </ion-select>
+            </ion-item>
+ 
+            
+            <ion-item>
+              <ion-input required name="city" type="text" 
+                         placeholder="Please enter the city you live in" 
+                         [(ngModel)]="application.cityOfResidence"></ion-input>
+            </ion-item>
+
+
+            <h6>Have you been diagnosed with a substance use disorder at some time in the past?</h6>
+            <ion-radio-group [(ngModel)]="application.hasSubstanceDisorder" name="substanceDisorder" required>
+              <ion-item>
+                <ion-radio slot="start" id="yesSubstanceUse" name="substanceUse" [value]="'Yes'" ></ion-radio>
+                <ion-label>Yes</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-radio slot="start" name="noSubstanceUse" [value]="'No'"></ion-radio>
+                <ion-label>No</ion-label>
+              </ion-item>
+            </ion-radio-group>
+            
+
+            <h6>Do you self-identify as a woman?</h6>
+            <ion-radio-group [(ngModel)]="application.isWoman" name="woman" required>
+              <ion-item>
+                <ion-radio slot="start" name="woman" [value]="'Yes'" ></ion-radio>
+                <ion-label>Yes</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-radio slot="start" name="woman" [value]="'No'"></ion-radio>
+                <ion-label>No</ion-label>
+              </ion-item>
+            </ion-radio-group>
+ 
+          </div>
+
+          <div padding id="page2" [hidden]="pageCounter == 0">
+            <h6>Do agree to treat other users with respect and avoid any harmful or stigmatizing language?</h6>
+            <ion-radio-group [(ngModel)]="application.avoidStimatizingLang" name="substanceDisorder" required>
+              <ion-item>
+                <ion-radio slot="start" name="stigmaLang" [value]="'Yes'" ></ion-radio>
+                <ion-label>Yes</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-radio slot="start" name="stigmaLang" [value]="'No'"></ion-radio>
+                <ion-label>No</ion-label>
+              </ion-item>
+            </ion-radio-group>
+
+
+            <h6>Do you agree to the terms of respectful participation and understand that you may be removed
+              from app participation if you do not?</h6>
+            <ion-radio-group [(ngModel)]="application.respectfulParticipation" name="respectParticipation" required>
+              <ion-item>
+                <ion-radio slot="start" name="respectParticipation" [value]="'Yes'" ></ion-radio>
+                <ion-label>Yes</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-radio slot="start" name="respectParticipation" [value]="'No'"></ion-radio>
+                <ion-label>No</ion-label>
+              </ion-item>
+            </ion-radio-group>
+
+
+            <h6>Do you understand that this app is currently in development, and that your use patterns (such
+              as how often you log in, what elements you use, and what types of questions you ask may be
+              monitored for use in research to improve the app)?</h6>
+            <ion-radio-group [(ngModel)]="application.trackedUsagePatterns" name="appTracking" required>
+              <ion-item>
+                <ion-radio slot="start" name="appTracking" [value]="'Yes'" ></ion-radio>
+                <ion-label>Yes</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-radio slot="start" name="appTracking" [value]="'No'"></ion-radio>
+                <ion-label>No</ion-label>
+              </ion-item>
+            </ion-radio-group>
+
+
+            <h6>Do you agree to be contacted in the future about potential participation in a research study
+about use of this app? (Answering yes or no to this question will not impact whether you are
+allowed to use the app, and even if you select yes, you will not required to join any research
+study if asked)</h6>
+            <ion-radio-group [(ngModel)]="application.furtherContact" name="furtherContact" required>
+              <ion-item>
+                <ion-radio slot="start" name="furtherContact" [value]="'Yes'" ></ion-radio>
+                <ion-label>Yes</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-radio slot="start" name="furtherContact" [value]="'No'"></ion-radio>
+                <ion-label>No</ion-label>
+              </ion-item>
+            </ion-radio-group>
+          </div>
+
+          <div padding class="forward-back-buttons" style="margin:auto">
+            <ion-button size="large" display="inline" type="button" [disabled]="pageCounter === 0" (click)="DecrementCounter()">Previous</ion-button>
+            <ion-button size="large" display="inline" type="button" [disabled]="pageCounter === numPages" (click)="IncrementCounter()">Next</ion-button>
+          </div>
+          <div>
+            <ion-button  size="large" type="submit" [disabled]="accessForm.invalid" expand="block" >Request Access</ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
