@@ -9,6 +9,10 @@ const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
+    path: 'privacy-policy',
+    loadChildren: () => import('./privacy-policy/privacy-policy.module').then(m => m.PrivacyPolicyPageModule)
+  },
+  {
     path: 'request-access',
     loadChildren: () => import('./app-access-form/app-access-form.module').then(m => m.AppAccessFormPageModule)
   },
